@@ -1,9 +1,12 @@
 """
 Header
 History:
-[2016.03.23, CS]: initial setup; copy the main code from:
-                  http://usingpython.com/python-rpg-game/;
+[2016.03.23, CS]: initial setup; copy the main code from: 
+                  http://usingpython.com/python-rpg-game/; insert a second and 
+                  a third floor above the hall; insert items in the rooms;
+                  insert enemy; insert princess;
 """
+import random
 
 def showInstructions():
     # print a main menu and the commands
@@ -12,6 +15,7 @@ def showInstructions():
     print("commands:")
     print("'go [direction]'")
     print("'get [item]'")
+    print("'fight [person]'")
     
 def showStatus():
     # print the player's current status
@@ -22,6 +26,11 @@ def showStatus():
     # print an item if there is one
     if "item" in rooms[currentRoom]:
         print("you see a " + rooms[currentRoom]["item"])
+    # print POI if there is one
+    if "person" in rooms[currentRoom]:
+        print("you see " + rooms[currentRoom]["person"])
+        if rooms[currentRoom]["person"] == "princess":
+            print("you won the game!")
     print("---------------------------")
     
 # an inventory, which is initially empty
@@ -29,24 +38,51 @@ inventory = []
 
 # a dictionary linking a room to other positions
 rooms = {
-            1:{ "name" : "hall",
-                "east" : 2,
-                "south": 3},
+            11:{ "name" : "hall",
+                 "east" : 12,
+                 "south": 13,
+                 "up"   : 21,
+                 "item" : "torch"},
                 
-            2:{ "name" : "bedroom",
-                "west" : 1,
-                "south": 4,
-                "item" : "sword"},
+            12:{ "name" : "bedroom",
+                 "west" : 11,
+                 "south": 14},
                 
-            3:{ "name" : "kitchen",
-                "north" : 1},
+            13:{ "name" : "kitchen",
+                 "north": 11,
+                 "item" : "sword"},
                 
-            4:{ "name" : "bathroom",
-                "north" : 2}
+            14:{ "name" : "bathroom",
+                 "north": 12,
+                 "item" : "soap"},
+                
+            21:{ "name" : "stair",
+                 "east" : 22,
+                 "south": 23,
+                 "down" : 11,
+                 "item" : "torch"},
+                
+            22:{ "name" : "corridor",
+                 "west" : 21,
+                 "south": 24,
+                 "up"   : 32,
+                 "item" : "torch",
+                 "person": "gretchin"},
+                
+            23:{ "name" : "terrace",
+                 "north": 21},
+                
+            24:{ "name" : "study",
+                 "north": 22,
+                 "item" : "book"},
+            
+            32:{ "name" : "towerroom",
+                 "down" : 22,
+                 "person" : "princess"}
         }
         
 # start the player in room 1
-currentRoom = 1
+currentRoom = 11
 
 showInstructions()
 
@@ -85,3 +121,21 @@ while True:
         else:
             # tell them they can't get it
             print("can't get " + move[1] + "!")
+            
+    # if they type 'fight' first
+    if move[0] == "fight":
+        # if the player has a sword he is better at fighting
+        if "sword" in inventory:
+            if(random.randint(1,6+1)>2):
+                print("enemy died")
+                # if the enemy died delete it from the room
+                del rooms[currentRoom]["person"]
+            else:
+                print("you died")
+        else:
+            if(random.randint(1,6+1)>4):
+                print("enemy died")
+                # if the enemy died delete it from the room
+                del rooms[currentRoom]["person"]
+            else:
+                print("you died")
