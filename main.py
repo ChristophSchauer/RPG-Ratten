@@ -16,6 +16,7 @@ def showInstructions():
     print("'go [direction]'")
     print("'get [item]'")
     print("'fight [person]'")
+    print("'drop [item]'")
     
 def showStatus():
     # print the player's current status
@@ -139,3 +140,14 @@ while True:
                 del rooms[currentRoom]["person"]
             else:
                 print("you died")
+                
+    # if the player wants to drop something
+    if move[0] == "drop":
+        # look if the player has something to drop
+        if inventory == []:
+            print("you can't drop anything")
+        else:
+            rooms[currentRoom]["item"] = move[1]
+            del inventory[inventory.index(move[1])]
+            print("you dropped " + move[1] + "!")
+            
