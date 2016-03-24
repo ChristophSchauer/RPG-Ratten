@@ -118,10 +118,23 @@ def fct_drop(parameter, currentRoom, rooms, inventory):
     return(inventory)
   
 playerstatus = {
-                    "health"    : 10,
-                    "life"      : 1,
-                    "money"     : 10
+                    "name"      : [],
+                    "clever"    : 2,
+                    "social"    : 2,
+                    "strong"    : 2,
+                    "fast"      : 2,
+                    "life"      : 6,
+                    "tricks"    : [],
+                    "talents"   : [],
+                    "pack"      : "redeyes",
+                    "proscons"  : []
                }
+               
+def random_dice(numberdices):
+    values = []
+    [values.append(random.randint(1,7)) for i in range(numberdices)]
+    
+    return(values)
 
 def fct_rooms():
     if os.path.exists(path_at_work + '\rooms.json'):
