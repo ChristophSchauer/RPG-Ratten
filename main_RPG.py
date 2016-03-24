@@ -1,5 +1,9 @@
 """
 Header
+
+@author: Christoph
+Version: 0.1
+
 History:
 [2016.03.23, CS]:   initial setup; copy the main code from: 
                     http://usingpython.com/python-rpg-game/; insert a second and 
@@ -9,7 +13,11 @@ History:
                     the use of the key; insert the exit function; put every 
                     command in an own function; save playerstatus; load rooms 
                     from an external file or use the dummy file;
-                    ERROR1: say the user the right counter of turns he used
+                    ERROR1: say the user the right counter of turns he used;
+                    start with the function for the char generation;
+                    generate a functions file;
+                    insert the asking of the user to save his char;
+                    ERROR2: thLib has an error, maybe reinstallation of python;
 """
 # for random numbers
 import random
@@ -18,37 +26,10 @@ import sys
 import json
 import os
 
+import functions_RPG
+
 path_at_work = r'C:\Users\Schauer\Documents\Privat\RPG-Ratten.git\trunk'
 
-def showInstructions():
-    # print a main menu and the commands
-    print("RPG Game")
-    print("========")
-    print("commands:")
-    print("'exit'")
-    print("'status'")
-    print("'go [direction]'")
-    print("'get [item]'")
-    print("'fight [person]'")
-    print("'drop [item]'")
-    
-def showStatus(currentRoom, rooms, turn):
-    # print the player's current status
-    print("---------------------------")
-    print("you are in the " + rooms[currentRoom]["name"])
-    # print the current inventory
-    print("inventory: " + str(inventory))
-    # print an item if there is one
-    if "item" in rooms[currentRoom]:
-        print("you see: " + str(rooms[currentRoom]["item"]))
-    # print POI if there is one
-    if "person" in rooms[currentRoom]:
-        print("you see: " + rooms[currentRoom]["person"])
-        if rooms[currentRoom]["person"] == "princess":
-            print("you won the game!")
-            print("you played " + str(turn) + " turn(s)")
-    print("---------------------------")
-  
 def fct_move(parameter, currentRoom, rooms):
     # check that they are allowed wherever they want to go
     if parameter in rooms[currentRoom]:
@@ -116,19 +97,6 @@ def fct_drop(parameter, currentRoom, rooms, inventory):
         del inventory[inventory.index(parameter)]
         print("you dropped " + parameter + "!")
     return(inventory)
-  
-playerstatus = {
-                    "name"      : [],
-                    "clever"    : 2,
-                    "social"    : 2,
-                    "strong"    : 2,
-                    "fast"      : 2,
-                    "life"      : 6,
-                    "tricks"    : [],
-                    "talents"   : [],
-                    "pack"      : "redeyes",
-                    "proscons"  : []
-               }
                
 def random_dice(numberdices):
     values = []
@@ -191,12 +159,14 @@ def fct_rooms():
                
 def fct_main(currentRoom, inventory , turn, rooms):
     
-    showInstructions()
+    playerstatus = functions_RPG.generate_char()
+    
+    functions_RPG.showInstructions()
     
     # loop infinitely
     while True:
         
-        showStatus(currentRoom, rooms, turn)
+        functions_RPG.showStatus(currentRoom, rooms, turn, inventory)
         
         # get the player's next move
         # .split() breaks it up into a list array
@@ -226,12 +196,18 @@ def fct_main(currentRoom, inventory , turn, rooms):
         if move[0] == "exit":
             print("thank you for playing")
             print("you played " + str(turn) + " turn(s)")
-            with open(path_at_work + '\playerstats.json', 'w') as f:
-                json.dump(playerstatus, f)
-            print("stats saved under: " + path_at_work)      
+            print("want to save your char (y/n)?")
+            decision = input(">")
+            if decision == 'y' or decision == 'Y':
+                print("where do you want to save your char?")
+                #path = th.ui.getfile(FilterSpec='.json', DialogTitle='Select File:')
+                #myfile = os.path.join(path[1],path[0])
+                with open(myfile, 'w') as f:
+                    json.dump(playerstatus, f)
+                    print("stats saved under: " + path_at_work)      
             sys.exit()
             
-        turn += turn
+        turn += 1
         
 # main function
 if __name__=='__main__':
