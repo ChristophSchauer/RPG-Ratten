@@ -7,9 +7,30 @@ Version : 0.1
 
 History:
 [2016.03.24, CS]:   initial setup; put in all the functions of the main_RPG;
+                    ERROR1: say the user the right counter of turns he used;
+                    start with the function for the char generation;
+                    generate a functions file;
+                    insert the asking of the user to save his char;
+                    ERROR2: thLib has an error, maybe reinstallation of python;
 [2016.03.25, CS]:   insert the rest of the functions; insert the random_dice 
                     function;
                     start with the rat fighting system function;
+                    ERROR2 solved: put the needed functions into the 
+                    functions_RPG.py;
+                    ERROR1: solved: the turn counter has to inerate with 1 and 
+                    not with itself;
+                    implement random_dice function with any number of dices, 
+                    output and an exclusion criteria;
+                    ERROR3: starting a fight the following message appears:
+                    'numpy.float64' object cannot be interpreted as an integer;
+                    ERROR3: solved: change the type of the fight_array from
+                    float64 to int32;
+                    ERROR4: problem with the enemy's turn in fct_fight_rat;                    
+[2016.03.29, CS]:   change the char generation; check, that the player has not
+                    more than 3 points on each attribute;
+                    ERROR4: solved: checked the if clauses for the fights;
+                    changed the damage_calculation: the attack values of player
+                    and enemy are passed;
 """
 import random
 import os.path as pfad
@@ -122,8 +143,9 @@ def showInstructions():
                 "========", 
                 "commands:", 
                 "'exit'", 
-                "'status'", 
-                "'go [direction]'", 
+                "'status'",
+                "'mission'", 
+                "'go [north, east, south, west, up, down]'", 
                 "'get [item]'", 
                 "'fight [person]'", 
                 "'drop [item]'")
@@ -168,10 +190,12 @@ def generate_char():
         value = 0
         print_lines("you can distribute 8 points onto the following 4 attributes:\n", 
                     "clever, social, strong, fast", 
-                    "seperate them by comma (eg:2,2,3,1)")
+                    "seperate them by comma (eg:2,2,3,1)",
+                    "no atttribute should have more than 3 points")
         data = input(">").split(sep= ",")
         for index in range(4):
-            value = value + int(data[index])
+            if int(data[index]) <= 3:
+                 value = value + int(data[index])
         if value != 8:
             print("you distributed the values false")
         else:
@@ -183,7 +207,8 @@ def generate_char():
     return(playerstatus_dummy)
 
 def fct_rooms(path_at_work):
-    print("want to load a room layout or use the default (Y/N)?")
+    print("want to load a room layout (Y/N)?",
+          "if N, the default training area is loaded.")
     decision = input(">").lower()
     if decision == 'y' or decision == 'yes':
         path = getfile(FilterSpec='.json', DialogTitle='Select file:')
@@ -192,57 +217,55 @@ def fct_rooms(path_at_work):
             rooms = json.load(f)
     else:
         print("using default")
-        if pfad.exists(path_at_work + '\rooms.json'):
-            with open(path_at_work + '\rooms.json') as f:
-                rooms = json.load(f)
 
     # a dictionary linking a room to other positions
-        else:
-            rooms = {
-                11:{ "name" : "hall",
-                     "east" : 12,
-                     "south": 13,
-                     "up"   : 21,
-                     "item" : ["torch"]},
-                    
-                12:{ "name" : "bedroom",
-                     "west" : 11,
-                     "south": 14,
-                     "item" : ["key"]},
-                    
-                13:{ "name" : "kitchen",
-                     "north": 11,
-                     "item" : ["sword"]},
-                    
-                14:{ "name" : "bathroom",
-                     "north": 12,
-                     "item" : ["soap"]},
-                    
-                21:{ "name" : "stair",
-                     "east" : 22,
-                     "south": 23,
-                     "down" : 11,
-                     "item" : ["torch"]},
-                    
-                22:{ "name" : "corridor",
-                     "west" : 21,
-                     "south": 24,
-                     "up"   : 32,
-                     "item" : ["torch"],
-                     "person": "fledermaus"},
-                    
-                23:{ "name" : "terrace",
-                     "north": 21},
-                    
-                24:{ "name" : "study",
-                     "north": 22,
-                     "item" : ["book"]},
+        rooms = {
+            00:{ "mission" : "find the princess"},
+        
+            11:{ "name" : "hall",
+                 "east" : 12,
+                 "south": 13,
+                 "up"   : 21,
+                 "item" : ["torch"]},
                 
-                32:{ "name" : "towerroom",
-                     "down" : 22,
-                     "person" : "princess",
-                     "property" : "locked"}
-                    }
+            12:{ "name" : "bedroom",
+                 "west" : 11,
+                 "south": 14,
+                 "item" : ["key"]},
+                
+            13:{ "name" : "kitchen",
+                 "north": 11,
+                 "item" : ["sword"]},
+                
+            14:{ "name" : "bathroom",
+                 "north": 12,
+                 "item" : ["soap"]},
+                
+            21:{ "name" : "stair",
+                 "east" : 22,
+                 "south": 23,
+                 "down" : 11,
+                 "item" : ["torch"]},
+                
+            22:{ "name" : "corridor",
+                 "west" : 21,
+                 "south": 24,
+                 "up"   : 32,
+                 "item" : ["torch"],
+                 "person": "fledermaus"},
+                
+            23:{ "name" : "terrace",
+                 "north": 21},
+                
+            24:{ "name" : "study",
+                 "north": 22,
+                 "item" : ["book"]},
+            
+            32:{ "name" : "towerroom",
+                 "down" : 22,
+                 "person" : "princess",
+                 "property" : "locked"}
+                }
     return(rooms)
     
 def fct_move(parameter, currentRoom, rooms, inventory):
@@ -337,7 +360,7 @@ def random_dice(numberdices=6, numberoutput=2, exclusion = ' '):
         values.sort(reverse=True)
         output = []
         if numberdices == 1:
-            return(values)
+            return(int(np.sum(values)))
         else:
             if exclusion != ' ':
                 for index in range(numberdices):
@@ -399,84 +422,128 @@ def fct_fight_rat(playerstatus, enemystatus, enemy, currentRoom, rooms):
         # calculate the malus for the dice results
         player_malus = int((fight_array[0,3]-fight_array[0,4])//2)
         enemy_malus = int((fight_array[1,3]-fight_array[1,4])//2)
-        print_lines("what do you want to do?", 
+
+        # falls der Spieler am Zug ist oder der Gegner bewusstlos ist:
+        if player_turn or fight_array[1,5] == 0:
+            decision = 0 
+            # falls der Spieler sich schon festgebissen hat
+            if fight_array[0,6] == 1:
+                # attack values of the enemy and the player not necessary, 
+                # because the damage is dealt automatically:
+                # player = 1
+                # enemy = 0
+                fight_array = damage_calculation(currentRoom, rooms, fight_array, player=1, enemy=0)               
+            # falls der Spieler sich noch nicht festgebissen hat
+            else: 
+                while decision == 0:
+                    print_lines("what do you want to do?", 
                     "(1) angreifen", # strong/fast
                     "(2) festbeißen", # strong/fast; dann strong/fast vs. strong/fast
                     "(3) überwältigen") # strong/fast, strong/clever vs. strong/clever
-        if fight_array[1,7] == 1:
-            print("(4) Überwältigung lösen")
-        decision = input(">")
-        
-        if player_turn or fight_array[1,5] == 0:
-            # falls der Spieler sich schon festgebissen hat
-            if fight_array[0,6] == 1:
-                fight_array = damage_calculation(currentRoom, rooms, fight_array, player_turn)
-
-            # falls der Spieler sich noch nicht festgebissen hat           
-            else: 
-                # Wert Spieler und Gegner bestimmen
-                player = random_dice(numberdices=fight_array[0,0]+fight_array[0,1], numberoutput=2, exclusion=' ') - int(player_malus)
-                # falls der Gegner nicht bewusstlos ist
-                if fight_array[1,5] != 0:
-                    # falls kleiner, dann ausweichen: clever/fast
-                    if random_dice(1,1)[0] < 4:
-                        enemy = random_dice(numberdices=fight_array[1,2]+fight_array[1,1], numberoutput=2, exclusion=' ') - int(enemy_malus)
-                    # sonst blocken: strong/fast
+                    if fight_array[1,6] == 1:
+                        print("(4) festbeißen lösen")
+                        if fight_array[1,7] == 1:
+                            print("(5) Überwältigung lösen")
                     else:
-                        enemy = random_dice(numberdices=fight_array[1,0]+fight_array[1,1], numberoutput=2, exclusion=' ') - int(enemy_malus)
-                # ansonsten hat er einen Kampf mit dem Ergebnis 0 gemacht
-                else:
-                    enemy = 0
-                
-                if player > enemy:
-                    # wenn der Spieler angreift
-                    if decision == 1:
-                        fight_array = damage_calculation(currentRoom, rooms, fight_array, player_turn)
+                        if fight_array[1,7] == 1:
+                            print("(4) Überwältigung lösen")
+                    decision = int(input(">"))
+                    # Wert Spieler und Gegner bestimmen
+                    player = random_dice(numberdices=fight_array[0,0]+fight_array[0,1], numberoutput=2, exclusion=' ') - int(player_malus)
+                    # falls der Gegner nicht bewusstlos ist
+                    if fight_array[1,5] != 0:
+                        # Wahrscheinlichkeit: 2/3 ausweichen, 1/3 blocken
+                        # falls kleiner, dann ausweichen: clever/fast
+                        if random.randint(1,6) < 4:
+                            enemy = random_dice(numberdices=fight_array[1,2]+fight_array[1,1], numberoutput=2, exclusion=' ') - int(enemy_malus)
+                        # sonst blocken: strong/fast
+                        else:
+                            enemy = random_dice(numberdices=fight_array[1,0]+fight_array[1,1], numberoutput=2, exclusion=' ') - int(enemy_malus)
+                    # ansonsten hat er einen Kampf mit dem Ergebnis 0 gemacht
+                    else:
+                        enemy = 0
+                    
+                    if player > enemy:
+                        # falls es keine Überwältigung und kein durch den Gegner gab
+                        if fight_array[1,7] == 1 and fight_array[1,6] == 1:
+                            if decision < 1 or decision > 5:
+                                print("falsche Eingabe")
+                                decision = 0
+                        # falls es keine festbeißen durch den Gegner gab
+                        elif fight_array[1,6] == 1:
+                            if decision < 1 or decision > 4:
+                                print("falsche Eingabe")
+                                decision = 0
+                        # falls es keine Behinderung durch den Gegner gab
+                        else:
+                            if decision < 1 or decision > 3:
+                                print("falsche Eingabe")
+                                decision = 0
+                        # wenn der Spieler angreift
+                        if decision == 1:
+                            fight_array = damage_calculation(currentRoom, rooms, fight_array, player, enemy)
+                                    
+                        # wenn der Spieler sich festbeißen will               
+                        if decision == 2:
+                            # Angriff erfolgreich, Schaden verrechnen
+                            fight_array = damage_calculation(currentRoom, rooms, fight_array, player, enemy)
                                 
-                    # wenn der Spieler sich festbeißen will               
-                    if decision == 2:
-                        # Angriff erfolgreich, Schaden verrechnen
-                        fight_array = damage_calculation(currentRoom, rooms, fight_array, player_turn)
-                            
-                        # muss sich noch festbeißen
-                        player = random_dice(numberdices=fight_array[0,0]+fight_array[0,1], numberoutput=2, exclusion=' ') - int(player_malus)
-                        enemy = random_dice(numberdices=fight_array[1,0]+fight_array[1,1], numberoutput=2, exclusion=' ') - int(enemy_malus)
-                        # falls größer, hast sich der Spieler festgebissen
-                        if player > enemy:
-                            fight_array[0,6] = 1
-                            print("du konntest dich festbeißen")
-                        else:
-                            print("du konntest dich nicht festbeißen")
-                           
-                    # falls der Spieler den Gegner überwältigen will
-                    if decision == 3:
-                        # kein Schaden verrechnet
-                        # muss den Gegner noch überwältigen
-                        player = random_dice(numberdices=fight_array[0,0]+fight_array[0,2], numberoutput=2, exclusion=' ') - int(player_malus)
-                        enemy = random_dice(numberdices=fight_array[1,0]+fight_array[1,2], numberoutput=2, exclusion=' ') - int(enemy_malus)
-                        # falls größer, wurde der Gegner überwältigt
-                        if player > enemy:
-                            fight_array[0,7] = 1
-                            print("du hast den Gegner überwältigt")
-                        else:
-                            print("du konntest den Gegner nicht überwältigen")
-                else:
-                    print("der Gegner hat dich ausgetrickst")
+                            # muss sich noch festbeißen
+                            player = random_dice(numberdices=fight_array[0,0]+fight_array[0,1], numberoutput=2, exclusion=' ') - int(player_malus)
+                            enemy = random_dice(numberdices=fight_array[1,0]+fight_array[1,1], numberoutput=2, exclusion=' ') - int(enemy_malus)
+                            # falls größer, hast sich der Spieler festgebissen
+                            if player > enemy:
+                                fight_array[0,6] = 1
+                                print("du konntest dich festbeißen")
+                            else:
+                                print("du konntest dich nicht festbeißen")
+                               
+                        # falls der Spieler den Gegner überwältigen will
+                        if decision == 3:
+                            # kein Schaden verrechnet
+                            # muss den Gegner noch überwältigen
+                            player = random_dice(numberdices=fight_array[0,0]+fight_array[0,2], numberoutput=2, exclusion=' ') - int(player_malus)
+                            enemy = random_dice(numberdices=fight_array[1,0]+fight_array[1,2], numberoutput=2, exclusion=' ') - int(enemy_malus)
+                            # falls größer, wurde der Gegner überwältigt
+                            if player > enemy:
+                                fight_array[0,7] = 1
+                                print("du hast den Gegner überwältigt")
+                            else:
+                                print("du konntest den Gegner nicht überwältigen")  
+                        if decision == 4:
+                            print("du könntest das Festbeißen lösen")
+                        if decision == 5:
+                            print("du könntest das Überwältigen lösen")
+                    else:
+                        print("der Gegner hat dich ausgetrickst")
+                        
         else: # enemy turn
             # hat nur eine Attacke pro Runde
             attack_used = False
+            
+            # if the enemy lost consciosness he has no turn
+            if fight_array[1,5] == 0:
+                attack_used = True
+                
             # falls der Gegner überwätligt wurde, befreit er sich
-            if fight_array[0,6] == 1 and attack_used == False:
+            if fight_array[0,7] == 1 and attack_used == False:
                 enemy = random_dice(numberdices=fight_array[1,0]+fight_array[1,2], numberoutput=2, exclusion=' ') - int(fight_array[0,0]) - int(enemy_malus)
                 player = random_dice(numberdices=fight_array[0,0]+fight_array[0,2], numberoutput=2, exclusion=' ') - int(player_malus)
                 if enemy>player:
                     print("der Gegner hat sich befreit")
-                    fight_array[0,6] = 0
+                    fight_array[0,7] = 0
                 else:
                     print("der Gegner konnte sich nicht befreien")
                 attack_used = True
             # festbeißen lösen , selber festbeißen, selber angreifen oder überwältigen
-            decision = random.randint(1,4)
+            # falls Spieler sich nicht festgebissen hat
+            if fight_array[0,6] == 0:
+                # gibt es nur 3 Möglichkeiten (angreifen, selber festbeißen, überwältigen)
+                decision = random.randint(1,3)
+            # falls Spieler sich festgebissen hat
+            else:
+                # gibt es 4 Möglichkeiten (angreifen, selber festbeißen, überwältigen, festbeißen lösen)
+                decision = random.randint(1,4)
             
             # Werte für Angriff vorberechnen
             enemy = random_dice(numberdices=fight_array[1,0]+fight_array[1,2], numberoutput=2, exclusion=' ') - int(enemy_malus)
@@ -485,22 +552,18 @@ def fct_fight_rat(playerstatus, enemystatus, enemy, currentRoom, rooms):
             # falls 1, dann angreifen
             if decision == 1 and attack_used == False:
                 if enemy > player:
-                    fight_array = damage_calculation(currentRoom, rooms, fight_array, player_turn)
-                    
-            # falls 2, dann festbeißen lösen
-            elif decision == 2 and attack_used == False:
-                enemy = random_dice(numberdices=fight_array[1,0]+fight_array[1,1], numberoutput=2, exclusion=' ') - int(enemy_malus)
-                player = random_dice(numberdices=fight_array[0,0]+fight_array[0,1], numberoutput=2, exclusion=' ') - int(player_malus)
-                if enemy > player:
-                    print("der Gegner konnte sich aus deinem Biss lösen")
+                    fight_array = damage_calculation(currentRoom, rooms, fight_array, player, enemy)
+                    print("der Gegner hat dich attackiert und hat dir Schaden zugefügt")
                 else:
-                    print("der Gegner konnte sich aus deinem Biss nicht lösen")
+                    print("der Gegner hat dich attackiert, hat dir aber keinen Schaden zugefügt")
+                attack_used = True
                     
-            # falls 3, dann selber festbeißen
-            elif decision == 3 and attack_used == False:
+            # falls 2, dann selber festbeißen
+            elif decision == 2 and attack_used == False:
                 # angreifen
                 if enemy > player:
-                    fight_array = damage_calculation(currentRoom, rooms, fight_array, player_turn)
+                    fight_array = damage_calculation(currentRoom, rooms, fight_array, player, enemy)
+                    print("der Gegner hat dich attackiert und versucht sich fest zubeißen")
                     # festbeißen
                     enemy = random_dice(numberdices=fight_array[1,0]+fight_array[1,1], numberoutput=2, exclusion=' ') - int(enemy_malus)
                     player = random_dice(numberdices=fight_array[0,0]+fight_array[0,1], numberoutput=2, exclusion=' ') - int(player_malus)
@@ -509,28 +572,50 @@ def fct_fight_rat(playerstatus, enemystatus, enemy, currentRoom, rooms):
                         print("der Gegner konnte sich festbeißen")
                     else:
                         print("der Gegner konnte sich nicht festbeißen")
+                else:
+                    print("der Gegner hat dich attackiert, hat dir aber keinen Schaden zugefügt")
+                attack_used = True
                         
-            # falls 4. dann Spieler überwältigen
+            # falls 3, dann Spieler überwältigen
+            elif decision == 3 and attack_used == False:
+                if enemy > player:
+                    print("der Gegner hat dich attackiert und versucht dich zu überwältigen")
+                    enemy = random_dice(numberdices=fight_array[1,0]+fight_array[1,2], numberoutput=2, exclusion=' ') - int(enemy_malus)
+                    player = random_dice(numberdices=fight_array[0,0]+fight_array[0,2], numberoutput=2, exclusion=' ') - int(player_malus)
+                    # falls größer, wurde der Gegner überwältigt
+                    if enemy > player:
+                        fight_array[1,7] = 1
+                        print("du wurdest überwältigt")
+                    else:
+                        print("du konntest vom Gegner nicht überwältigen werden")
+                else:
+                    print("der Gegner hat dich attackiert, hat dir aber keinen Schaden zugefügt")
+                attack_used = True
+                     
+            # falls 4, dann festbeißen lösen
+            elif decision == 4 and attack_used == False:
+                enemy = random_dice(numberdices=fight_array[1,0]+fight_array[1,1], numberoutput=2, exclusion=' ') - int(enemy_malus)
+                player = random_dice(numberdices=fight_array[0,0]+fight_array[0,1], numberoutput=2, exclusion=' ') - int(player_malus)
+                if enemy > player:
+                    print("der Gegner konnte sich aus deinem Biss lösen")
+                else:
+                    print("der Gegner konnte sich nicht aus deinem Biss lösen")
+                attack_used = True
+            
             else:
-             if enemy > player:
-                 enemy = random_dice(numberdices=fight_array[1,0]+fight_array[1,2], numberoutput=2, exclusion=' ') - int(enemy_malus)
-                 player = random_dice(numberdices=fight_array[0,0]+fight_array[0,2], numberoutput=2, exclusion=' ') - int(player_malus)
-                 # falls größer, wurde der Gegner überwältigt
-                 if enemy > player:
-                     fight_array[1,7] = 1
-                     print("du wurdest überwältigt")
-                 else:
-                     print("du konntest vom Gegner nicht überwältigen werden") 
-            attack_used = True
+                print("du hast den Gegner ausgetrickst")
             
         # switch turns
         player_turn = not player_turn
         enemy_turn = not enemy_turn
         
+    if fight_array[1,4] == 0:
+        print("der Gegner ist tot")
+    else:
+        print("du bist gestorben nach XXX turns")
         
-                    
-def damage_calculation(currentRoom, rooms, fight_array, player_turn):
-    if player_turn    :
+def damage_calculation(currentRoom, rooms, fight_array, player, enemy):
+    if player > enemy:
         # Abzug der Lebenspunkte
         fight_array[1,4] = fight_array[1,4] - fight_array[0,0]
         print("du hast den Gegner gebissen")

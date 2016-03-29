@@ -12,23 +12,7 @@ History:
 [2016.03.24, CS]:   insert game logic (need a key for the towerroom door) and 
                     the use of the key; insert the exit function; put every 
                     command in an own function; save playerstatus; load rooms 
-                    from an external file or use the dummy file;
-                    ERROR1: say the user the right counter of turns he used;
-                    start with the function for the char generation;
-                    generate a functions file;
-                    insert the asking of the user to save his char;
-                    ERROR2: thLib has an error, maybe reinstallation of python;
-[2016.03.25, CS]:   ERROR2 solved: put the needed functions into the 
-                    functions_RPG.py;
-                    ERROR1: solved: the turn counter has to inerate with 1 and 
-                    not with itself;
-                    implement random_dice function with any number of dices, 
-                    output and an exclusion criteria;
-                    ERROR3: starting a fight the following message appears:
-                    'numpy.float64' object cannot be interpreted as an integer;
-                    ERROR3: solved: change the type of the fight_array from
-                    float64 to int32;
-                    ERROR4: problem with the enemy's turn;
+                    from an external file or use the dummy file;                    
 """
 # import the functions
 import functions_RPG
@@ -55,29 +39,41 @@ def fct_main(currentRoom, inventory , turn, rooms):
         
         # if they type 'go' first
         if move[0] == "go":
-            currentRoom = functions_RPG.fct_move(move[1], currentRoom, rooms, inventory)
-        
+            if parameter_enemies_RPG.directions.count(move[1]) == 1:
+                currentRoom = functions_RPG.fct_move(move[1], currentRoom, rooms, inventory)
+                turn += 1
+            else:
+                print("burn the heretic, this is no legal direction!")
+            
         # if they type 'get' first
-        if move[0] == "get":
+        elif move[0] == "get":
             inventory = functions_RPG.fct_get(move[1], currentRoom, rooms, inventory)
                 
         # if they type 'fight' first
-        if move[0] == "fight":
+        elif move[0] == "fight":
             #functions_RPG.fct_fight(move[1], currentRoom, rooms, inventory, turn)
             functions_RPG.fct_fight_rat(playerstatus, parameter_enemies_RPG.enemystatus, move[1], currentRoom, rooms)
                     
         # if the player wants to drop something
-        if move[0] == "drop":
+        elif move[0] == "drop":
             inventory = functions_RPG.fct_drop(move[1], currentRoom, rooms, inventory)
-              
-        if move[0] == "status":
-            print(playerstatus)
-                
-        if move[0] == "exit":
-            functions_RPG.fct_exit(turn, playerstatus)
-           
-        turn += 1
         
+        #if the player wants to know his status
+        elif move[0] == "status":
+            print(playerstatus)
+            
+        # if the player wants to end the game        
+        elif move[0] == "exit":
+            functions_RPG.fct_exit(turn, playerstatus)
+            
+        # if the player wants to end the game        
+        elif move[0] == "mission":
+            print(rooms[00]["mission"])   
+            
+        # if there is a false input from the player
+        else: 
+            print("falsche Eingabe")
+           
 # main function
 if __name__=='__main__':
     # start the player in room 1
