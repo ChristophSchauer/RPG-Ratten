@@ -31,6 +31,10 @@ History:
                     ERROR4: solved: checked the if clauses for the fights;
                     changed the damage_calculation: the attack values of player
                     and enemy are passed;
+[2016.03.30, CS]:   ERROR7: change random_dice: add the checking for zero 
+                    dices, the function random_dice function has to check for 
+                    the number of dices which are thrown and adjust the output 
+                    accordingly;
 """
 import random
 import os.path as pfad
@@ -194,7 +198,8 @@ def generate_char():
                     "no atttribute should have more than 3 points")
         data = input(">").split(sep= ",")
         for index in range(4):
-            if int(data[index]) <= 3:
+            # check if the values from the user are between 0 and 3
+            if int(data[index]) <= 3 and int(data[index]) >= 0:
                  value = value + int(data[index])
         if value != 8:
             print("you distributed the values false")
@@ -204,9 +209,10 @@ def generate_char():
             playerstatus_dummy["strong"] = int(data[2])
             playerstatus_dummy["fast"] = int(data[3])
             playerstatus_dummy["life"] = int(data[2])*3
+    print("your char was created, now the game can begin")
     return(playerstatus_dummy)
 
-def fct_rooms(path_at_work):
+def fct_rooms():
     print("want to load a room layout (Y/N)?",
           "if N, the default training area is loaded.")
     decision = input(">").lower()
@@ -306,25 +312,30 @@ def fct_get(parameter, currentRoom, rooms, inventory):
     return(inventory)
     
 def fct_fight(parameter, currentRoom, rooms, inventory, turn):
-    # if the player has a sword he is better at fighting
-    if "sword" in inventory:
-        if(random.randint(1,6+1)>2):
-            print("enemy died")
-            # if the enemy died delete it from the room
-            del rooms[currentRoom]["person"]
+    # check if someone is in the room
+    # check that they are allowed whoever they want to fight
+    if "person" in rooms[currentRoom] and parameter in rooms[currentRoom]["person"]:
+        # if the player has a sword he is better at fighting
+        if "sword" in inventory:
+            if(random.randint(1,6+1)>2):
+                print("enemy died")
+                # if the enemy died delete it from the room
+                del rooms[currentRoom]["person"]
+            else:
+                print("you died")
+                print("you played " + str(turn) + " turn(s)")
+                exit()
         else:
-            print("you died")
-            print("you played " + str(turn) + " turn(s)")
-            exit()
+            if(random.randint(1,6+1)>4):
+                print("enemy died")
+                # if the enemy died delete it from the room
+                del rooms[currentRoom]["person"]
+            else:
+                print("you died")
+                print("you played " + str(turn) + " turn(s)")
+                exit()
     else:
-        if(random.randint(1,6+1)>4):
-            print("enemy died")
-            # if the enemy died delete it from the room
-            del rooms[currentRoom]["person"]
-        else:
-            print("you died")
-            print("you played " + str(turn) + " turn(s)")
-            exit()
+        print("you are fighting against your own shadow")
             
 def fct_drop(parameter, currentRoom, rooms, inventory):
     # look if the player has something to drop
