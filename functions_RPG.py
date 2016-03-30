@@ -36,7 +36,15 @@ History:
                     the number of dices which are thrown and adjust the output 
                     accordingly;
                     ERROR7: solved;
+                    exit() changed to raise SystemExit;
+                    changed the rooms-dictionary: all the persons must be 
+                    defined with 0 or 1, if the player can fight against them 
+                    or not;
+                    changed the move-funtion and the rooms-dictionary: now all
+                    doors must be defined with 'locked' or 'opened';
 """
+import parameter_RPG
+
 import random
 import os.path as pfad
 import json
@@ -166,8 +174,8 @@ def showStatus(currentRoom, rooms, turn, inventory):
         print("you see: " + str(rooms[currentRoom]["item"]))
     # print POI if there is one
     if "person" in rooms[currentRoom]:
-        print("you see: " + rooms[currentRoom]["person"])
-        if rooms[currentRoom]["person"] == "princess":
+        print("you see: " + rooms[currentRoom]["person"][0])
+        if rooms[currentRoom]["person"][0] == "princess":
             print_lines("you won the game!", 
                         "you played " + str(turn) + " turn(s)")
     print("---------------------------")
@@ -230,68 +238,71 @@ def fct_rooms():
             00:{ "mission" : "find the princess"},
         
             11:{ "name" : "hall",
-                 "east" : 12,
-                 "south": 13,
-                 "up"   : 21,
+                 "east" : [12,'opened'],
+                 "south": [13,'opened'],
+                 "up"   : [21,'opened'],
                  "item" : ["torch"]},
                 
             12:{ "name" : "bedroom",
-                 "west" : 11,
-                 "south": 14,
+                 "west" : [11,'opened'],
+                 "south": [14,'opened'],
                  "item" : ["key"]},
                 
             13:{ "name" : "kitchen",
-                 "north": 11,
+                 "north": [11,'opened'],
                  "item" : ["sword"]},
                 
             14:{ "name" : "bathroom",
-                 "north": 12,
+                 "north": [12,'opened'],
                  "item" : ["soap"]},
                 
             21:{ "name" : "stair",
-                 "east" : 22,
-                 "south": 23,
-                 "down" : 11,
+                 "east" : [22,'opened'],
+                 "south": [23,'opened'],
+                 "down" : [11,'opened'],
                  "item" : ["torch"]},
                 
             22:{ "name" : "corridor",
-                 "west" : 21,
-                 "south": 24,
-                 "up"   : 32,
+                 "west" : [21,'opened'],
+                 "south": [24,'opened'],
+                 "up"   : [32,'locked'],
                  "item" : ["torch"],
-                 "person": "fledermaus"},
+                 "person": ["fledermaus",1]},
                 
             23:{ "name" : "terrace",
-                 "north": 21},
+                 "north": [21,'opened']},
                 
             24:{ "name" : "study",
-                 "north": 22,
+                 "north": [22,'opened'],
                  "item" : ["book"]},
             
             32:{ "name" : "towerroom",
-                 "down" : 22,
-                 "person" : "princess",
-                 "property" : "locked"}
+                 "down" : [22,'locked'],
+                 "person" : ["princess",0]}
                 }
     return(rooms)
     
 def fct_move(parameter, currentRoom, rooms, inventory):
     # check that they are allowed wherever they want to go
     if parameter in rooms[currentRoom]:
-        newRoom = rooms[currentRoom][parameter]
         # check if the door to the new room is locked
-        if "property" in rooms[newRoom] and rooms[newRoom]["property"] == "locked":
+        if "locked" in rooms[currentRoom][parameter]:
             print("door locked")
             if "key" in inventory:
                print("want to use the key? [Y/N]")
                answer = input(">").lower()
                if answer == "y" or answer == "yes":
                    print("opens the door with the key")
+                   # change the door property
+                   rooms[currentRoom][parameter][rooms[currentRoom][parameter].index("locked")] = 'opened'
                    # set the current room to the new room
-                   currentRoom = rooms[currentRoom][parameter]
+                   currentRoom = rooms[currentRoom][parameter][0]
+                   # change the lock of the old room from the new room
+                   other = parameter_RPG.directions[(parameter_RPG.directions.index(parameter)+3)%6]
+                   rooms[currentRoom][other][rooms[currentRoom][other].index("locked")] = 'opened'                  
         else:
             # set the current room to the new room
-            currentRoom = rooms[currentRoom][parameter]
+            currentRoom = rooms[currentRoom][parameter][0]
     # if there is no door/link to the new room
     else:               
         print("you can't go that way!")
@@ -317,24 +328,27 @@ def fct_fight(parameter, currentRoom, rooms, inventory, turn):
     # check that they are allowed whoever they want to fight
     if "person" in rooms[currentRoom] and parameter in rooms[currentRoom]["person"]:
         # if the player has a sword he is better at fighting
-        if "sword" in inventory:
-            if(random.randint(1,6+1)>2):
-                print("enemy died")
-                # if the enemy died delete it from the room
-                del rooms[currentRoom]["person"]
+        if rooms[currentRoom]['person'][1] == 1:
+            if "sword" in inventory:
+                if(random.randint(1,6+1)>2):
+                    print("enemy died")
+                    # if the enemy died delete it from the room
+                    del rooms[currentRoom]["person"]
+                else:
+                    print("you died")
+                    print("you played " + str(turn) + " turn(s)")
+                    raise SystemExit
             else:
-                print("you died")
-                print("you played " + str(turn) + " turn(s)")
-                exit()
+                if(random.randint(1,6+1)>4):
+                    print("enemy died")
+                    # if the enemy died delete it from the room
+                    del rooms[currentRoom]["person"]
+                else:
+                    print("you died")
+                    print("you played " + str(turn) + " turn(s)")
+                    raise SystemExit
         else:
-            if(random.randint(1,6+1)>4):
-                print("enemy died")
-                # if the enemy died delete it from the room
-                del rooms[currentRoom]["person"]
-            else:
-                print("you died")
-                print("you played " + str(turn) + " turn(s)")
-                exit()
+            print("this person can't be attacked")
     else:
         print("you are fighting against your own shadow")
             
@@ -360,7 +374,7 @@ def fct_exit(turn, playerstatus):
         with open(myfile, 'w') as f:
             json.dump(playerstatus, f)
             print("stats saved under: " + myfile)      
-    exit()
+    raise SystemExit
     
 def random_dice(numberdices=6, numberoutput=2, exclusion = ' '):
     # if more than 0 dices are used
