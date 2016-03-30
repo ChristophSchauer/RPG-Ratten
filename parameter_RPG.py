@@ -9,6 +9,7 @@ History:
 [2016.03.25, CS]:   start with an enemy array; 
                     start with packs, talents, tricks;
 [2016.03.29, CS]:   insert a list with the possible directions;
+[2016.03.30, CS]:   changed the name to parameter_RPG.py
 
 """
 directions = ['north','east','south','west','up','down']

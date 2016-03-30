@@ -35,6 +35,7 @@ History:
                     dices, the function random_dice function has to check for 
                     the number of dices which are thrown and adjust the output 
                     accordingly;
+                    ERROR7: solved;
 """
 import random
 import os.path as pfad
@@ -362,9 +363,13 @@ def fct_exit(turn, playerstatus):
     exit()
     
 def random_dice(numberdices=6, numberoutput=2, exclusion = ' '):
-    if numberoutput > numberdices:
-        return('ERROR')
-    else:
+    # if more than 0 dices are used
+    if numberdices > 0:
+        # if the output would be larger than the input
+        # limit the number of dices to the output number
+        if numberoutput > numberdices:
+            numberoutput = numberdices
+
         values = []
         for i in range(numberdices):
             values.append(random.randint(1,6))
@@ -382,6 +387,9 @@ def random_dice(numberdices=6, numberoutput=2, exclusion = ' '):
                 for index in range(numberoutput):
                     output += [values[index]]
         return(int(np.sum(output)))
+    # if 0 or less dices are used
+    else:
+        return(0)
     
 def fct_fight_rat(playerstatus, enemystatus, enemy, currentRoom, rooms):
     # look for any exclusion criteria
