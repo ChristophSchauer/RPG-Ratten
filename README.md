@@ -9,7 +9,7 @@ the pictures in the folder are from the kaushambi mall
 
 ## Help
 
-If you experience any problems using stackedBarGraph, open an [issue](https://github.com/ChristophSchauer/RPG-Ratten/issues) on GitHub and tell us about it.
+If you experience any problems using it, open an [issue](https://github.com/ChristophSchauer/RPG-Ratten/issues) on GitHub and tell us about it.
 
 
 ## Copyright
