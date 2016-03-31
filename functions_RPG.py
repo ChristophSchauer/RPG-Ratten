@@ -42,16 +42,17 @@ History:
                     or not;
                     changed the move-funtion and the rooms-dictionary: now all
                     doors must be defined with 'locked' or 'opened';
+[2016.03.31, CS]:   changed the imported libraries to save memory;
 """
 import parameter_RPG
 
-import random
-import os.path as pfad
+from random import randint
+from os import path
 import json
-import tkinter as tk
-import tkinter.filedialog as tkf
 
-import numpy as np
+import tkinter
+
+from numpy import ones
 
 from time import sleep
 
@@ -82,21 +83,21 @@ def getfile(FilterSpec='*', DialogTitle='Select File: ', DefaultName=''):
     
     '''
     
-    root = tk.Tk()
+    root = tkinter.Tk()
     root.withdraw()
-    fullInFile = tkf.askopenfilename(initialfile=DefaultName,
+    fullInFile = tkinter.filedialog.askopenfilename(initialfile=DefaultName,
             title=DialogTitle, filetypes=[('all files','*'), ('Select',
                 FilterSpec)])
     
     # Close the Tk-window manager again
     root.destroy()
     
-    if not pfad.exists(fullInFile):
+    if not path.exists(fullInFile):
         return (0, 0)
     else:
         print('Selection: ' + fullInFile)
-        dirName = pfad.dirname(fullInFile)
-        fileName = pfad.basename(fullInFile)
+        dirName = path.dirname(fullInFile)
+        fileName = path.basename(fullInFile)
         return (fileName, dirName)
         
 def savefile(FilterSpec='*',DialogTitle='Save File: ', DefaultName=''):
@@ -128,9 +129,9 @@ def savefile(FilterSpec='*',DialogTitle='Save File: ', DefaultName=''):
 
     '''
     
-    root = tk.Tk()
+    root = tkinter.Tk()
     root.withdraw()
-    outFile = tkf.asksaveasfile(mode='w', title=DialogTitle, initialfile=DefaultName, filetypes=[('Save as', FilterSpec)])
+    outFile = tkinter.filedialog.asksaveasfile(mode='w', title=DialogTitle, initialfile=DefaultName, filetypes=[('Save as', FilterSpec)])
     
     # Close the Tk-window manager again
     root.destroy()
@@ -140,8 +141,8 @@ def savefile(FilterSpec='*',DialogTitle='Save File: ', DefaultName=''):
     else:
         fullOutFile = outFile.name
         print('Selection: ' + fullOutFile)
-        dirName = pfad.dirname(fullOutFile)
-        fileName = pfad.basename(fullOutFile)
+        dirName = path.dirname(fullOutFile)
+        fileName = path.basename(fullOutFile)
         
     return (fileName, dirName)
     
@@ -181,9 +182,6 @@ def showStatus(currentRoom, rooms, turn, inventory):
             print_lines("you won the game!", 
                         "you played " + str(turn) + " turn(s)")
     print("---------------------------")
-    print("the game closes in 10 seconds")
-    sleep(10)
-    raise SystemExit
                        
 def generate_char():
     playerstatus_dummy = {
@@ -232,7 +230,7 @@ def fct_rooms():
     decision = input(">").lower()
     if decision == 'y' or decision == 'yes':
         path = getfile(FilterSpec='.json', DialogTitle='Select file:')
-        myfile = pfad.join(path[1],path[0])
+        myfile = path.join(path[1],path[0])
         with open(myfile) as f:
             rooms = json.load(f)
     else:
@@ -335,7 +333,7 @@ def fct_fight(parameter, currentRoom, rooms, inventory, turn):
         # if the player has a sword he is better at fighting
         if rooms[currentRoom]['person'][1] == 1:
             if "sword" in inventory:
-                if(random.randint(1,6+1)>2):
+                if(randint(1,6+1)>2):
                     print("enemy died")
                     # if the enemy died delete it from the room
                     del rooms[currentRoom]["person"]
@@ -347,7 +345,7 @@ def fct_fight(parameter, currentRoom, rooms, inventory, turn):
                     sleep(10)
                     raise SystemExit
             else:
-                if(random.randint(1,6+1)>4):
+                if(randint(1,6+1)>4):
                     print("enemy died")
                     # if the enemy died delete it from the room
                     del rooms[currentRoom]["person"]
@@ -381,7 +379,7 @@ def fct_exit(turn, playerstatus):
     if decision == 'y' or decision == 'yes':
         print("where do you want to save your char?")
         path = savefile(FilterSpec='.json', DialogTitle='Select File:')
-        myfile = pfad.join(path[1],path[0])
+        myfile = path.join(path[1],path[0])
         with open(myfile, 'w') as f:
             json.dump(playerstatus, f)
             print("stats saved under: " + myfile)      
@@ -397,11 +395,11 @@ def random_dice(numberdices=6, numberoutput=2, exclusion = ' '):
 
         values = []
         for i in range(numberdices):
-            values.append(random.randint(1,6))
+            values.append(randint(1,6))
         values.sort(reverse=True)
         output = []
         if numberdices == 1:
-            return(int(np.sum(values)))
+            return(int(sum(values)))
         else:
             if exclusion != ' ':
                 for index in range(numberdices):
@@ -411,7 +409,7 @@ def random_dice(numberdices=6, numberoutput=2, exclusion = ' '):
             else:
                 for index in range(numberoutput):
                     output += [values[index]]
-        return(int(np.sum(output)))
+        return(int(sum(output)))
     # if 0 or less dices are used
     else:
         return(0)
@@ -441,7 +439,7 @@ def fct_fight_rat(playerstatus, enemystatus, enemy, currentRoom, rooms):
         enemy_turn = True
     
     # values needed: strong, fast, clever, life
-    fight_array = np.ones((2,8))
+    fight_array = ones((2,8))
     fight_array[0,0] = playerstatus['strong']
     fight_array[0,1] = playerstatus['fast']
     fight_array[0,2] = playerstatus['clever']
@@ -498,7 +496,7 @@ def fct_fight_rat(playerstatus, enemystatus, enemy, currentRoom, rooms):
                     if fight_array[1,5] != 0:
                         # Wahrscheinlichkeit: 2/3 ausweichen, 1/3 blocken
                         # falls kleiner, dann ausweichen: clever/fast
-                        if random.randint(1,6) < 4:
+                        if randint(1,6) < 4:
                             enemy = random_dice(numberdices=fight_array[1,2]+fight_array[1,1], numberoutput=2, exclusion=' ') - int(enemy_malus)
                         # sonst blocken: strong/fast
                         else:
@@ -583,11 +581,11 @@ def fct_fight_rat(playerstatus, enemystatus, enemy, currentRoom, rooms):
             # falls Spieler sich nicht festgebissen hat
             if fight_array[0,6] == 0:
                 # gibt es nur 3 Möglichkeiten (angreifen, selber festbeißen, überwältigen)
-                decision = random.randint(1,3)
+                decision = randint(1,3)
             # falls Spieler sich festgebissen hat
             else:
                 # gibt es 4 Möglichkeiten (angreifen, selber festbeißen, überwältigen, festbeißen lösen)
-                decision = random.randint(1,4)
+                decision = randint(1,4)
             
             # Werte für Angriff vorberechnen
             enemy = random_dice(numberdices=fight_array[1,0]+fight_array[1,2], numberoutput=2, exclusion=' ') - int(enemy_malus)

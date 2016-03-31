@@ -24,7 +24,7 @@ History:
 """
 # import the functions
 import functions_RPG
-import parameter_RPG
+from parameter_RPG import directions
             
 def fct_main(currentRoom, inventory , turn, rooms):
     
@@ -48,7 +48,7 @@ def fct_main(currentRoom, inventory , turn, rooms):
             # if they type 'go' first
             if move[0] == "go":
                 if len(move) == 2:
-                    if parameter_RPG.directions.count(move[1]) == 1:
+                    if directions.count(move[1]) == 1:
                         currentRoom = functions_RPG.fct_move(move[1], currentRoom, rooms, inventory)
                         turn += 1
                     else:
