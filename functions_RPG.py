@@ -53,6 +53,8 @@ import tkinter.filedialog as tkf
 
 import numpy as np
 
+from time import sleep
+
 def getfile(FilterSpec='*', DialogTitle='Select File: ', DefaultName=''):
     '''
     taken from Thomas Haslwanter
@@ -179,6 +181,9 @@ def showStatus(currentRoom, rooms, turn, inventory):
             print_lines("you won the game!", 
                         "you played " + str(turn) + " turn(s)")
     print("---------------------------")
+    print("the game closes in 10 seconds")
+    sleep(10)
+    raise SystemExit
                        
 def generate_char():
     playerstatus_dummy = {
@@ -337,6 +342,9 @@ def fct_fight(parameter, currentRoom, rooms, inventory, turn):
                 else:
                     print("you died")
                     print("you played " + str(turn) + " turn(s)")
+                    # waits for 10 seconds to close the game
+                    print("the game closes in 10 seconds")
+                    sleep(10)
                     raise SystemExit
             else:
                 if(random.randint(1,6+1)>4):
@@ -346,6 +354,9 @@ def fct_fight(parameter, currentRoom, rooms, inventory, turn):
                 else:
                     print("you died")
                     print("you played " + str(turn) + " turn(s)")
+                    # waits for 10 seconds to close the game
+                    print("the game closes in 10 seconds")
+                    sleep(10)
                     raise SystemExit
         else:
             print("this person can't be attacked")
