@@ -1,0 +1,1 @@
+pyinstaller.exe --onefile --distpath C:\Users\Christoph\Documents\RPG-Ratten.git\trunk\ C:\Users\Christoph\Documents\RPG-Ratten.git\trunk\main_RPG.py
