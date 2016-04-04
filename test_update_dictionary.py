@@ -108,7 +108,4 @@ class Application(tkinter.Frame):
     def start(self):
         self.root.mainloop()
         
-
-
-
 Application().start()
