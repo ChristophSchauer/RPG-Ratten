@@ -25,6 +25,12 @@ History:
 # import the functions
 import functions_RPG
 from parameter_RPG import directions
+
+def credits_game():
+    functions_RPG.print_lines("development and programming","Christoph","Hias","")
+    functions_RPG.print_lines("testing","Flo","Gerfried","")
+    functions_RPG.print_lines("support","missing","")
+    functions_RPG.print_lines("special thanks","Kopfkino")
             
 def fct_main(currentRoom, inventory , turn, rooms):
     
@@ -88,7 +94,10 @@ def fct_main(currentRoom, inventory , turn, rooms):
                 
             # if the player wants to end the game        
             elif move[0] == "mission":
-                print(rooms[00]["mission"])   
+                print(rooms[00]["mission"])  
+                
+            elif move[0] == "credits":
+                credits_game()                  
                 
             # if there is a false input from the player
             else: 

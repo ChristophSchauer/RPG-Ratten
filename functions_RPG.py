@@ -164,7 +164,8 @@ def showInstructions():
                 "'go [north, east, south, west, up, down]'", 
                 "'get [item]'", 
                 "'fight [person]'", 
-                "'drop [item]'")
+                "'drop [item]'",
+                "'credits'")
     
 def showStatus(currentRoom, rooms, turn, inventory):
     # print the player's current status
