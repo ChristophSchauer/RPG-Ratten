@@ -43,6 +43,10 @@ History:
                     changed the move-funtion and the rooms-dictionary: now all
                     doors must be defined with 'locked' or 'opened';
 [2016.03.31, CS]:   changed the imported libraries to save memory;
+[2016.04.06, CS]:   ERROR#14: when the map should be loaded, there is a problem 
+                    with y/j, maybe english and german layout of Keyboard;
+                    ERROR#14: solved: also answer for the z from english
+                    keyboards;
 """
 import parameter_RPG
 
@@ -295,7 +299,7 @@ def fct_move(parameter, currentRoom, rooms, inventory):
             if "key" in inventory:
                print("want to use the key? [Y/N]")
                answer = input(">").lower()
-               if answer == "y" or answer == "yes":
+               if answer == "y" or answer == "yes" or answer == "z":
                    print("opens the door with the key")
                    # change the door property
                    rooms[currentRoom][parameter][rooms[currentRoom][parameter].index("locked")] = 'opened'
@@ -376,8 +380,8 @@ def fct_exit(turn, playerstatus):
     print_lines("thank you for playing", 
                "you played " + str(turn) + " turn(s)", 
               "want to save your char (y/n)?")
-    decision = input(">").lower()
-    if decision == 'y' or decision == 'yes':
+    answer = input(">").lower()
+    if answer == 'y' or answer == 'yes' or answer == "z":
         print("where do you want to save your char?")
         path = savefile(FilterSpec='.json', DialogTitle='Select File:')
         myfile = path.join(path[1],path[0])
