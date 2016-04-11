@@ -47,6 +47,7 @@ History:
                     with y/j, maybe english and german layout of Keyboard;
                     ERROR#14: solved: also answer for the z from english
                     keyboards;
+[2016.04.11, MG]:   ISSUE#13: Adjacent rooms are now shown, TODO: Hidden room option;
 """
 import parameter_RPG
 
