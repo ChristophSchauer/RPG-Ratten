@@ -186,6 +186,15 @@ def showStatus(currentRoom, rooms, turn, inventory):
         if rooms[currentRoom]["person"][0] == "princess":
             print_lines("you won the game!", 
                         "you played " + str(turn) + " turn(s)")
+    # print other accessible rooms
+    CurRoom = set(rooms[currentRoom]).intersection(parameter_RPG.directions)
+    
+    if len(CurRoom) == 1:
+    	print("There's a door leading: " + str(CurRoom))
+    elif len(CurRoom) == 0:
+    	print("There are no doors you can see!")
+    elif len(CurRoom) > 1:
+    	print("There are doors leading: " + str(CurRoom))
     print("---------------------------")
                        
 def generate_char():
