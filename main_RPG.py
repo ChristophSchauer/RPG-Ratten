@@ -21,6 +21,8 @@ History:
                     -> crash;
                     ERROR6: solved: look, if the person the player wants to
                     fight is in the room;
+[2016.04.11, CS]:   ISSUE#16: changed all the naming of the interaction in
+                    english;
 """
 # import the functions
 import functions_RPG
@@ -60,14 +62,14 @@ def fct_main(currentRoom, inventory , turn, rooms):
                     else:
                         print("burn the heretic, this is no legal direction!")
                 else: 
-                    print("falsche Eingabe")
+                    print("false input")
                 
             # if they type 'get' first
             elif move[0] == "get":
                 if len(move) == 2:
                     inventory = functions_RPG.fct_get(move[1], currentRoom, rooms, inventory)
                 else: 
-                    print("falsche Eingabe")
+                    print("false input")
                     
             # if they type 'fight' first
             elif move[0] == "fight":
@@ -75,14 +77,14 @@ def fct_main(currentRoom, inventory , turn, rooms):
                     functions_RPG.fct_fight(move[1], currentRoom, rooms, inventory, turn)
                     #functions_RPG.fct_fight_rat(playerstatus, parameter_enemies_RPG.enemystatus, move[1], currentRoom, rooms)
                 else: 
-                    print("falsche Eingabe")
+                    print("false input")
                         
             # if the player wants to drop something
             elif move[0] == "drop":
                 if len(move) == 2:
                     inventory = functions_RPG.fct_drop(move[1], currentRoom, rooms, inventory)
                 else: 
-                    print("falsche Eingabe")
+                    print("false input")
             
             #if the player wants to know his status
             elif move[0] == "status":
@@ -101,7 +103,7 @@ def fct_main(currentRoom, inventory , turn, rooms):
                 
             # if there is a false input from the player
             else: 
-                print("falsche Eingabe")
+                print("false input")
         else:
             print("should I try something? no, this is your adventure")
            
