@@ -96,7 +96,7 @@ def fct_main(currentRoom, inventory , turn, rooms):
                 
             # if the player wants to end the game        
             elif move[0] == "mission":
-                print(rooms[00]["mission"])  
+                print(rooms[00]["mission_eng"])  
                 
             elif move[0] == "credits":
                 credits_game()                  

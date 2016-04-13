@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """
 Header
 
@@ -259,6 +259,13 @@ def generate_char():
                     "clever, social, strong, fast", 
                     "seperate them by comma (eg:2,2,3,1)",
                     "no atttribute should have more than 3 points")
+        """
+        # if german
+        print_lines("du kannst 8 Punkte auf die folgenden 4 Attribute verteilen:\n",
+                    "clever, sozial, stark, schnell",
+                    "trenne sie mit Komma (z.B.: 2,2,3,1)",
+                    "keiner der Attribute dar mehr als 3 PUnkte haben")
+        """
         data = input(">").split(sep= ",")
         for index in range(4):
             # check if the values from the user are between 0 and 3
@@ -289,7 +296,8 @@ def fct_rooms():
 
     # a dictionary linking a room to other positions
         rooms = {
-            00:{ "mission" : "find the princess"},
+            00:{ "mission_eng" : "find the princess",
+                 "mission_ger" : "finde die Prinzessin"},
         
             11:{ "name" : "hall",
                  "east" : [12,'opened'],

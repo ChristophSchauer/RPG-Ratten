@@ -14,6 +14,8 @@ History:
                     find the direction of the last room;
 [2016.04.11, CS]:   ISSUE#16: changed all the naming of the interaction in
                     english;
+[2016.04.13, CS]:   ISSUE#17: start with the dictionary for 'generate_char' and 
+                    'showStatus';
 """
 # sorted to be used for the ring
 directions = ['north','east','up','south','west','down']
@@ -153,6 +155,21 @@ tricks = ['Außergewöhnlicher Verbündeter', 'Eisenkiefer', 'Eisenmagen', 'Dick
 # Stufe 1 oder 2 (Bonus +1/+2)
 talents = ['Aus dem Weg gehen', 'Fallenkunde', 'Gänge und Abteilungen', 'hear,see,sniff', 'scratch,bite', 'climb,spring', 'legends,rumors', 'Quasseln und beeindrucken', 'swim,dive', 'vanish,hide', 'Von den Erbauern', 'Von der Natur', 'Wunden lecken']
 
+talents_eng = ['Aus dem Weg gehen', 'Fallenkunde', 'Gänge und Abteilungen', 'hear,see,sniff', 'scratch,bite', 'climb,spring', 'legends,rumors', 'Quasseln und beeindrucken', 'swim,dive', 'vanish,hide', 'Von den Erbauern', 'Von der Natur', 'Wunden lecken']
+
 # german / english dictionary
-language = {"selection" : "Auswahl",
-            "name your hero please:" : "Bitte benenne deinen Helden:"}
+language = {"selection"                         : "Auswahl",
+            # generate_char
+            "name your hero please:"            : "Bitte benenne deinen Helden:",
+            "you distributed the values false"  : "du hast die Werte falsch verteilt",
+            "your char was created, now the game can begin" : "Character erstellt, beginne das Abenteuer",
+            # showStatus
+            "you are in the "                   : "du bist in der/dem ",
+            "inventory: "                       : "Inventar: ",
+            "you see: "                         : "du siehst: ",
+            "you won the game!"                 : "du hast das Spiel gewonnen!",
+            "you played "                       : "Spielzeit ",
+            " turn(s)"                          : " Zug/Züge",
+            "There's a door leading: "          : "Eine Tür führt nach: ",
+            "There are no doors you can see!"   : "Du siehst keine Türen!",
+            "There are doors leading: "         : "Es führen Türen nach: "}
