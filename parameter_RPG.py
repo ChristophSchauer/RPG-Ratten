@@ -14,8 +14,8 @@ History:
                     find the direction of the last room;
 [2016.04.11, CS]:   ISSUE#16: changed all the naming of the interaction in
                     english;
-[2016.04.13, CS]:   ISSUE#17: start with the dictionary for 'generate_char' and 
-                    'showStatus';
+[2016.04.13, CS]:   ISSUE#17: start with the dictionary for 'generate_char', 'showStatus',
+                    fct_rooms, fct_move, fct_get, fct_drop, fct_fight;
 """
 # sorted to be used for the ring
 directions = ['north','east','up','south','west','down']
@@ -172,4 +172,26 @@ language = {"selection"                         : "Auswahl",
             " turn(s)"                          : " Zug/Züge",
             "There's a door leading: "          : "Eine Tür führt nach: ",
             "There are no doors you can see!"   : "Du siehst keine Türen!",
-            "There are doors leading: "         : "Es führen Türen nach: "}
+            "There are doors leading: "         : "Es führen Türen nach: ",
+            # fct_rooms
+            "using default":"",
+            # fct_move
+            "door locked":"",
+            "want to use the key? [Y/N]":"",
+            "opens the door with the key":"",
+            "you can't go that way!":"",
+            # fct_get
+            " got!":"",
+            "can't get ":"",
+            # fct_fight
+            "enemy died":"",
+            "you died":"",
+            "the game closes in 10 seconds":"",
+            "this person can't be attacked":"",
+            "you are fighting against your own shadow":"",
+            #ftc_drop
+            "you can't drop anything":"",
+            "you dropped ":""
+            # fct_exit
+            
+            }

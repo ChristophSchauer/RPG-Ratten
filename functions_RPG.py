@@ -52,6 +52,8 @@ History:
 [2016.04.11, CS]:   ISSUE#16: changed all the naming of the interaction in
                     english;
                     ISSUE#18: changed the call of tkinter;
+[2016.04.13, CS]:   ISSUE#17: long texts are not translated, they are checked with an if 
+                    clause and it exists a english and a german version of the text;                    
 """
 import parameter_RPG
 
@@ -285,6 +287,11 @@ def generate_char():
 def fct_rooms():
     print("want to load a room layout (Y/N)?",
           "if N, the default training area is loaded.")
+    '''
+    # if german
+    print("möchtest du eine Karte laden (J/N)?",
+          "falls N, dann wird das Trainingsareal geladen.")
+    '''
     decision = input(">").lower()
     if decision == 'y' or decision == 'yes':
         path = getfile(FilterSpec='.json', DialogTitle='Select file:')
