@@ -54,6 +54,7 @@ History:
                     ISSUE#18: changed the call of tkinter;
 [2016.04.13, CS]:   ISSUE#17: long texts are not translated, they are checked with an if 
                     clause and it exists a english and a german version of the text;                    
+[2016.04.11, MG]:   ISSUE#13: Hidden Rooms won't be shown;
 """
 import parameter_RPG
 
