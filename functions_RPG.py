@@ -226,8 +226,13 @@ def showStatus(currentRoom, rooms, turn, inventory):
             print_lines("you won the game!", 
                         "you played " + str(turn) + " turn(s)")
     # print other accessible rooms
-    CurRoom = set(rooms[currentRoom]).intersection(parameter_RPG.directions)
-    
+    CurRoom = []
+    for x in rooms[currentRoom]:
+        if x in parameter_RPG.directions:
+            if 'hidden' in rooms[currentRoom].get(x):
+                break
+            else:
+                CurRoom.append(x)
     if len(CurRoom) == 1:
     	print("There's a door leading: " + str(CurRoom))
     elif len(CurRoom) == 0:
@@ -327,7 +332,7 @@ def fct_rooms():
                 
             21:{ "name" : "stair",
                  "east" : [22,'opened'],
-                 "south": [23,'opened'],
+                 "south": [23,'opened','hidden'],
                  "down" : [11,'opened'],
                  "item" : ["torch"]},
                 
