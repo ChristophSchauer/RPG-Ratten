@@ -14,7 +14,7 @@ Contributions from the following people:
 * [Thomas Haslwanter](http://work.thaslwanter.at/ "Homepage")
 
 ## Help
-If you experience any problems using it, open an [issue](https://github.com/ChristophSchauer/RPG-Ratten/issues) on GitHub and tell us about it.
+If you experience any problems using it, open an [issue](https://github.com/ChristophSchauer/RPG-Ratten/issues) on GitHub and tell us about it. For referencing which version you are using please insert the version number shown at the top of the command window into the title of the Issue.
 
 ## Copyright
 Copyright (c) 2016 Christoph Schauer. See LICENSE for further details.

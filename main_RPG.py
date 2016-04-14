@@ -26,11 +26,12 @@ History:
 [2016.04.14, CS]:   insert Version of the program: consists of game version, date, hour 
                     and initials (eg V0_2016.04.14_15_CS);
 """
+# version number
+version = 'V0_2016.04.14_15_CS'
+
 # import the functions
 import functions_RPG
 from parameter_RPG import directions
-
-version = 'V0_2016.04.14_15_CS'
 
 def credits_game():
     functions_RPG.print_lines("development and programming","Christoph","Hias","")
@@ -42,8 +43,7 @@ def fct_main(currentRoom, inventory , turn, rooms):
     
     playerstatus = functions_RPG.generate_char()
     
-    global version
-    print('Version: %s' % version)
+
     
     functions_RPG.showInstructions()
     
@@ -122,6 +122,9 @@ if __name__=='__main__':
     inventory = []
     # initialize the turns
     turn = 1
+    # version number
+    global version
+    print('Version: %s' % version)
     # generate rooms
     rooms = functions_RPG.fct_rooms()
     # start the game
