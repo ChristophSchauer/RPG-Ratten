@@ -26,12 +26,12 @@ History:
 [2016.04.14, CS]:   insert Version of the program: consists of game version, date, hour 
                     and initials (eg V0_2016.04.14_15_CS);
 """
-# version number
-version = 'V0_2016.04.14_15_CS'
-
 # import the functions
 import functions_RPG
 from parameter_RPG import directions
+
+# version number
+version = 'V0_2016.04.14_15_CS'
 
 def credits_game():
     functions_RPG.print_lines("development and programming","Christoph","Hias","")
