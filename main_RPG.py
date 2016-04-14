@@ -23,10 +23,14 @@ History:
                     fight is in the room;
 [2016.04.11, CS]:   ISSUE#16: changed all the naming of the interaction in
                     english;
+[2016.04.14, CS]:   insert Version of the program: consists of game version, date, hour 
+                    and initials (eg V0_2016.04.14_15_CS);
 """
 # import the functions
 import functions_RPG
 from parameter_RPG import directions
+
+version = 'V0_2016.04.14_15_CS'
 
 def credits_game():
     functions_RPG.print_lines("development and programming","Christoph","Hias","")
@@ -37,6 +41,9 @@ def credits_game():
 def fct_main(currentRoom, inventory , turn, rooms):
     
     playerstatus = functions_RPG.generate_char()
+    
+    global version
+    print('Version: %s' % version)
     
     functions_RPG.showInstructions()
     
