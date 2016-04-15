@@ -25,26 +25,25 @@ History:
                     english;
 [2016.04.14, CS]:   insert Version of the program: consists of game version, date, hour 
                     and initials (eg V0_2016.04.14_15_CS);
+[2016.04.15, CS]:   ISSUE#21: insert the save command;
 """
 # import the functions
 import functions_RPG
 from parameter_RPG import directions
 
 # version number
-version = 'V0_2016.04.14_15_CS'
+version = 'V0_2016.04.15_16_CS'
 
 def credits_game():
     functions_RPG.print_lines("development and programming","Christoph","Hias","")
-    functions_RPG.print_lines("testing","Flo","Gerfried","")
+    functions_RPG.print_lines("testing","Flo","Gerfried","Alex","")
     functions_RPG.print_lines("support","missing","")
     functions_RPG.print_lines("special thanks","Kopfkino")
             
 def fct_main(currentRoom, inventory , turn, rooms):
     
     playerstatus = functions_RPG.generate_char()
-    
-
-    
+       
     functions_RPG.showInstructions()
     
     # loop infinitely
@@ -106,7 +105,11 @@ def fct_main(currentRoom, inventory , turn, rooms):
                 print(rooms[00]["mission_eng"])  
                 
             elif move[0] == "credits":
-                credits_game()                  
+                credits_game()   
+                
+            # if the player wants to save his status
+            elif move[0] == "save":
+                functions_RPG.fct_save_game(playerstatus, rooms, currentRoom, inventory, turn)
                 
             # if there is a false input from the player
             else: 

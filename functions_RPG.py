@@ -55,6 +55,8 @@ History:
 [2016.04.13, CS]:   ISSUE#17: long texts are not translated, they are checked with an if 
                     clause and it exists a english and a german version of the text;                    
 [2016.04.11, MG]:   ISSUE#13: Hidden Rooms won't be shown;
+[2016.04.15, CS]:   ISSUE#21: write the function; also insert load funcction, but this one
+                    can't be assessed by the user until now;
 """
 import parameter_RPG
 
@@ -76,6 +78,8 @@ else:
 from numpy import ones
 
 from time import sleep
+
+import os
 
 def getfile(FilterSpec='*', DialogTitle='Select File: ', DefaultName=''):
     '''
@@ -107,19 +111,57 @@ def getfile(FilterSpec='*', DialogTitle='Select File: ', DefaultName=''):
     root = tk.Tk()
     root.withdraw()
     fullInFile = tkf.askopenfilename(initialfile=DefaultName,
-            title=DialogTitle, filetypes=[('all files','*'), ('Select',
-                FilterSpec)])
+            title=DialogTitle, filetypes=[('Select', FilterSpec),
+                                          ('all files','*')])
     
     # Close the Tk-window manager again
     root.destroy()
     
-    if not path.exists(fullInFile):
+    if not os.path.exists(fullInFile):
         return (0, 0)
     else:
         print('Selection: ' + fullInFile)
-        dirName = path.dirname(fullInFile)
-        fileName = path.basename(fullInFile)
+        dirName = os.path.dirname(fullInFile)
+        fileName = os.path.basename(fullInFile)
         return (fileName, dirName)
+
+def getdir(DialogTitle='Select Directory', DefaultName='.'):
+    ''' 
+    taken from Thomas Haslwanter
+    Select a directory
+    
+    Parameters
+    ----------
+    DialogTitle : string
+        Window title
+    DefaultName : string
+        Can be a directory AND filename
+
+    
+    Returns
+    -------
+    directory : string
+        Selected directory, or empty string if nothing is selected.
+
+    
+    Examples
+    --------
+    >>> myDir = thLib.ui.getdir('c:\\temp', 'Pick your directory')
+    
+    '''
+    
+    root = tk.Tk()
+    root.withdraw()
+    fullDir = tkf.askdirectory(initialdir=DefaultName, title=DialogTitle)
+    
+    # Close the Tk-window manager again
+    root.destroy()
+    
+    if not os.path.exists(fullDir):
+        return ''
+    else:
+        print('Selection: ' + fullDir)
+        return fullDir
         
 def savefile(FilterSpec='*',DialogTitle='Save File: ', DefaultName=''):
     '''
@@ -187,7 +229,8 @@ def showInstructions():
     print_lines("RPG Game", 
                 "========", 
                 "commands:", 
-                "'exit'", 
+                "'exit'",
+                "'save'",
                 "'status'",
                 "'mission'", 
                 "'go [north, east, south, west, up, down]'", 
@@ -456,6 +499,27 @@ def fct_exit(turn, playerstatus):
             json.dump(playerstatus, f)
             print("stats saved under: " + myfile)      
     raise SystemExit
+    
+def fct_save_game(playerstatus, rooms, currentRoom, inventory, turn):
+    path = getdir(DialogTitle='Select folder:')
+    os.chdir(path)
+    output = []
+    output.append(rooms)
+    output.append(playerstatus)
+    output.append(inventory)
+    output.append(currentRoom)
+    output.append(turn)
+    with open('saves.json', 'w') as fp:
+        json.dump(output, fp)
+    print('game saved')
+        
+def fct_load_game():
+    path = getfile(FilterSpec='.json', DialogTitle='Select file:')
+    os.chdir(path[1])
+    with open(path[0], 'r') as fp:
+        data = json.load(fp)
+    print('game loaded')
+    return(data[0],data[1],data[2],data[3],data[4])
     
 def random_dice(numberdices=6, numberoutput=2, exclusion = ' '):
     # if more than 0 dices are used
