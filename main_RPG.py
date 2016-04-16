@@ -28,6 +28,7 @@ History:
 [2016.04.15, CS]:   ISSUE#21: insert the save command;
 [2016.04.16, CS]:   ISSUE#21: implement the autosave;
 [2016.04.16, MG]:   ISSUE#19: "use" function called
+[2016.04.16, CS]:   ISSUE#22: shift the load game to the main function;
 """
 # import the functions
 import functions_RPG
@@ -36,18 +37,35 @@ from parameter_RPG import directions
 import time
 
 # version number
-version = 'V0_2016.04.15_16_CS'
+version = 'V0_2016.04.16_19_CS'
 
 def credits_game():
     functions_RPG.print_lines("development and programming","Christoph","Hias","")
     functions_RPG.print_lines("testing","Flo","Gerfried","Alex","")
     functions_RPG.print_lines("support","missing","")
     functions_RPG.print_lines("special thanks","Kopfkino")
-            
-def fct_main(currentRoom, inventory , turn, rooms, torch):
+
+def fct_main(currentRoom, inventory , turn, torch):
+    # time window until the game makes an autosave
     time_window = 0
     
-    playerstatus = functions_RPG.generate_char()
+    # ask the player, if he wants to load a game
+    functions_RPG.print_lines("want to load a room layout (Y/N)?",
+                              "if N, the default training area is loaded.")
+    '''
+    # if german
+    print_lines("möchtest du eine Karte laden (J/N)?",
+          "falls N, dann wird das Trainingsareal geladen.")
+    '''
+    decision = input('>').lower()
+    if decision == 'y' or decision == 'yes' or decision == 'z':
+        # load the data of the save game
+        playerstatus, rooms, currentRoom, inventory, turn = functions_RPG.fct_load_game()
+    else:
+        # generate the character
+        playerstatus = functions_RPG.generate_char()
+        # generate rooms
+        rooms = functions_RPG.fct_rooms()
        
     functions_RPG.showInstructions()
     
@@ -159,7 +177,6 @@ if __name__=='__main__':
     # version number
     global version
     print('Version: %s' % version)
-    # generate rooms
-    rooms = functions_RPG.fct_rooms()
+
     # start the game
-    fct_main(currentRoom, inventory, turn, rooms, torch)
+    fct_main(currentRoom, inventory, turn, torch)

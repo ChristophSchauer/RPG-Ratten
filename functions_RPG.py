@@ -59,7 +59,7 @@ History:
                     can't be assessed by the user until now;
 [2016.04.16, CS]:   ISSUE#21: at the end of the save name the actual time stamp
                     is added;
-[2016.04.16, MG]:   ISSUE#19: Darkness trigger and "use" function added
+[2016.04.16, MG]:   ISSUE#19: Darkness trigger and "use" function added;
 """
 import parameter_RPG
 
@@ -351,75 +351,61 @@ def generate_char():
     return(playerstatus_dummy)
 
 def fct_rooms():
-    print("want to load a room layout (Y/N)?",
-          "if N, the default training area is loaded.")
-    '''
-    # if german
-    print("möchtest du eine Karte laden (J/N)?",
-          "falls N, dann wird das Trainingsareal geladen.")
-    '''
-    decision = input(">").lower()
-    if decision == 'y' or decision == 'yes':
-        path = getfile(FilterSpec='.json', DialogTitle='Select file:')
-        myfile = path.join(path[1],path[0])
-        with open(myfile) as f:
-            rooms = json.load(f)
-    else:
-        print("using default")
+    print("using default")
 
     # a dictionary linking a room to other positions
-        rooms = {
-            00:{ "mission_eng" : "find the princess",
-                 "mission_ger" : "finde die Prinzessin"},
-        
-            11:{ "name" : "hall",
-                 "east" : [12,'opened'],
-                 "south": [13,'opened'],
-                 "up"   : [21,'opened'],
-                 "item" : ["torch"]},
-                
-            12:{ "name" : "bedroom",
-                 "west" : [11,'opened'],
-                 "south": [14,'opened'],},
-                
-            13:{ "name" : "kitchen",
-                 "north": [11,'opened'],
-                 "item" : ["sword"],
-                 "trigger": ["dark"]},
-                
-            14:{ "name" : "bathroom",
-                 "detail":"You see traces of a fight, the sink is broken.",
-                 "north": [12,'opened'],
-                 "item" : ["soap"]},
-                
-            21:{ "name" : "staircase",
-                 "detail":"You see a dusty old bookshelve.", 
-                 "east" : [22,'opened'],
-                 "south": [23,'opened','hidden','book'],
-                 "down" : [11,'opened'],
-                 "item" : ["torch"]},
-                
-            22:{ "name" : "corridor",
-                 "west" : [21,'opened'],
-                 "south": [24,'opened'],
-                 "up"   : [32,'locked'],
-                 "item" : ["torch"],
-                 "person": ["bat",1]},
-                
-            23:{ "name" : "terrace",
-                 "north": [21,'opened'],
-                 "trigger": ["dark"],
-                 "person": ["bat",1],
-                 "item" : ["key"]},
-                
-            24:{ "name" : "study",
-                 "north": [22,'opened'],
-                 "item" : ["book"]},
+    rooms = {
+        00:{ "mission_eng" : "find the princess",
+             "mission_ger" : "finde die Prinzessin"},
+    
+        11:{ "name" : "hall",
+             "east" : [12,'opened'],
+             "south": [13,'opened'],
+             "up"   : [21,'opened'],
+             "item" : ["torch"]},
             
-            32:{ "name" : "towerroom",
-                 "down" : [22,'locked'],
-                 "person" : ["princess",0]}
-                }
+        12:{ "name" : "bedroom",
+             "west" : [11,'opened'],
+             "south": [14,'opened'],},
+            
+        13:{ "name" : "kitchen",
+             "north": [11,'opened'],
+             "item" : ["sword"],
+             "trigger": ["dark"]},
+            
+        14:{ "name" : "bathroom",
+             "detail":"You see traces of a fight, the sink is broken.",
+             "north": [12,'opened'],
+             "item" : ["soap"]},
+            
+        21:{ "name" : "staircase",
+             "detail":"You see a dusty old bookshelve.", 
+             "east" : [22,'opened'],
+             "south": [23,'opened','hidden','book'],
+             "down" : [11,'opened'],
+             "item" : ["torch"]},
+            
+        22:{ "name" : "corridor",
+             "west" : [21,'opened'],
+             "south": [24,'opened'],
+             "up"   : [32,'locked'],
+             "item" : ["torch"],
+             "person": ["bat",1]},
+            
+        23:{ "name" : "terrace",
+             "north": [21,'opened'],
+             "trigger": ["dark"],
+             "person": ["bat",1],
+             "item" : ["key"]},
+            
+        24:{ "name" : "study",
+             "north": [22,'opened'],
+             "item" : ["book"]},
+        
+        32:{ "name" : "towerroom",
+             "down" : [22,'locked'],
+             "person" : ["princess",0]}
+            }
     return(rooms)
     
 def fct_move(parameter, currentRoom, rooms, inventory):
@@ -561,11 +547,11 @@ def fct_exit(turn, playerstatus):
     answer = input(">").lower()
     if answer == 'y' or answer == 'yes' or answer == "z":
         print("where do you want to save your char?")
-        path = savefile(FilterSpec='.json', DialogTitle='Select File:')
-        myfile = path.join(path[1],path[0])
-        with open(myfile, 'w') as f:
-            json.dump(playerstatus, f)
-            print("stats saved under: " + myfile)      
+        path = getdir(DialogTitle='Select folder:')
+        os.chdir(path)
+        with open('player_saves.json', 'w') as fp:
+            json.dump(playerstatus, fp)
+        print("stats saved under: " + path)      
     raise SystemExit
     
 def fct_save_game(auto, playerstatus, rooms, currentRoom, inventory, turn):
