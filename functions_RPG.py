@@ -57,6 +57,8 @@ History:
 [2016.04.11, MG]:   ISSUE#13: Hidden Rooms won't be shown;
 [2016.04.15, CS]:   ISSUE#21: write the function; also insert load funcction, but this one
                     can't be assessed by the user until now;
+[2016.04.16, CS]:   ISSUE#21: at the end of the save name the actual time stamp
+                    is added;
 """
 import parameter_RPG
 
@@ -77,7 +79,7 @@ else:
 
 from numpy import ones
 
-from time import sleep
+import time
 
 import os
 
@@ -457,7 +459,7 @@ def fct_fight(parameter, currentRoom, rooms, inventory, turn):
                     print("you played " + str(turn) + " turn(s)")
                     # waits for 10 seconds to close the game
                     print("the game closes in 10 seconds")
-                    sleep(10)
+                    time.sleep(10)
                     raise SystemExit
             else:
                 if(randint(1,6+1)>4):
@@ -469,7 +471,7 @@ def fct_fight(parameter, currentRoom, rooms, inventory, turn):
                     print("you played " + str(turn) + " turn(s)")
                     # waits for 10 seconds to close the game
                     print("the game closes in 10 seconds")
-                    sleep(10)
+                    time.sleep(10)
                     raise SystemExit
         else:
             print("this person can't be attacked")
@@ -500,17 +502,33 @@ def fct_exit(turn, playerstatus):
             print("stats saved under: " + myfile)      
     raise SystemExit
     
-def fct_save_game(playerstatus, rooms, currentRoom, inventory, turn):
-    path = getdir(DialogTitle='Select folder:')
-    os.chdir(path)
-    output = []
-    output.append(rooms)
-    output.append(playerstatus)
-    output.append(inventory)
-    output.append(currentRoom)
-    output.append(turn)
-    with open('saves.json', 'w') as fp:
-        json.dump(output, fp)
+def fct_save_game(auto, playerstatus, rooms, currentRoom, inventory, turn):
+    # get the localtime variables
+    localtime = time.localtime(time.time())
+    # make the save time stamp
+    save_time = str(localtime.tm_mday)+'_'+str(localtime.tm_hour)+'_'+str(localtime.tm_min)+'_'+str(localtime.tm_sec)
+    # if called from the auto save (auto=1)
+    if auto == 1:
+        output = []
+        output.append(rooms)
+        output.append(playerstatus)
+        output.append(inventory)
+        output.append(currentRoom)
+        output.append(turn)
+        with open('autosave_'+save_time+'.json', 'w') as fp:
+            json.dump(output, fp)
+    # if called by the user (auto=0)
+    else:      
+        path = getdir(DialogTitle='Select folder:')
+        os.chdir(path)
+        output = []
+        output.append(rooms)
+        output.append(playerstatus)
+        output.append(inventory)
+        output.append(currentRoom)
+        output.append(turn)
+        with open('player_saves_'+save_time+'.json', 'w') as fp:
+            json.dump(output, fp)
     print('game saved')
         
 def fct_load_game():

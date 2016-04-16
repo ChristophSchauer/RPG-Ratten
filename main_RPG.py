@@ -26,10 +26,13 @@ History:
 [2016.04.14, CS]:   insert Version of the program: consists of game version, date, hour 
                     and initials (eg V0_2016.04.14_15_CS);
 [2016.04.15, CS]:   ISSUE#21: insert the save command;
+[2016.04.16, CS]:   ISSUE#21: implement the autosave;
 """
 # import the functions
 import functions_RPG
 from parameter_RPG import directions
+
+import time
 
 # version number
 version = 'V0_2016.04.15_16_CS'
@@ -41,6 +44,7 @@ def credits_game():
     functions_RPG.print_lines("special thanks","Kopfkino")
             
 def fct_main(currentRoom, inventory , turn, rooms):
+    time_window = 0
     
     playerstatus = functions_RPG.generate_char()
        
@@ -48,6 +52,8 @@ def fct_main(currentRoom, inventory , turn, rooms):
     
     # loop infinitely
     while True:
+        # first time stamp
+        first_time_stamp = time.time()
         
         functions_RPG.showStatus(currentRoom, rooms, turn, inventory)
         
@@ -109,13 +115,23 @@ def fct_main(currentRoom, inventory , turn, rooms):
                 
             # if the player wants to save his status
             elif move[0] == "save":
-                functions_RPG.fct_save_game(playerstatus, rooms, currentRoom, inventory, turn)
+                functions_RPG.fct_save_game(0, playerstatus, rooms, currentRoom, inventory, turn)
                 
             # if there is a false input from the player
             else: 
                 print("false input")
         else:
             print("should I try something? no, this is your adventure")
+        
+        # second time stamp
+        second_time_stamp = time.time()
+        # add up the time stamps
+        time_window += second_time_stamp-first_time_stamp
+        # 5 min = 5*60 = 300
+        if time_window >= 300:    
+            time_window = 0
+            print('game since 5 minutes not stored')
+            functions_RPG.fct_save_game(1, playerstatus, rooms, currentRoom, inventory, turn)
            
 # main function
 if __name__=='__main__':
