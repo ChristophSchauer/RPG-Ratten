@@ -27,6 +27,7 @@ History:
                     and initials (eg V0_2016.04.14_15_CS);
 [2016.04.15, CS]:   ISSUE#21: insert the save command;
 [2016.04.16, CS]:   ISSUE#21: implement the autosave;
+[2016.04.16, MG]:   ISSUE#19: "use" function called
 """
 # import the functions
 import functions_RPG
@@ -98,6 +99,13 @@ def fct_main(currentRoom, inventory , turn, rooms):
                 else: 
                     print("false input")
             
+            #if the player wants to use something
+            elif move[0] == "use":
+                if len(move) == 2:
+                    inventory = functions_RPG.fct_use(move[1], currentRoom, rooms, inventory)
+                else: 
+                    print("false input")
+
             #if the player wants to know his status
             elif move[0] == "status":
                 print(playerstatus)

@@ -59,6 +59,7 @@ History:
                     can't be assessed by the user until now;
 [2016.04.16, CS]:   ISSUE#21: at the end of the save name the actual time stamp
                     is added;
+[2016.04.16, MG]:   ISSUE#19: Darkness trigger and "use" function added
 """
 import parameter_RPG
 
@@ -237,8 +238,9 @@ def showInstructions():
                 "'mission'", 
                 "'go [north, east, south, west, up, down]'", 
                 "'get [item]'", 
-                "'fight [person]'", 
+                "'use [item]'",
                 "'drop [item]'",
+                "'fight [person]'", 
                 "'credits'")
     
 def showStatus(currentRoom, rooms, turn, inventory):
@@ -262,15 +264,21 @@ def showStatus(currentRoom, rooms, turn, inventory):
     print("you are in the " + rooms[currentRoom]["name"])
     # print the current inventory
     print("inventory: " + str(inventory))
-    # print an item if there is one
-    if "item" in rooms[currentRoom]:
-        print("you see: " + str(rooms[currentRoom]["item"]))
-    # print POI if there is one
-    if "person" in rooms[currentRoom]:
-        print("you see: " + rooms[currentRoom]["person"][0])
-        if rooms[currentRoom]["person"][0] == "princess":
-            print_lines("you won the game!", 
-                        "you played " + str(turn) + " turn(s)")
+    # Triggercheck: check if room is too dark to see
+    triggercheck = rooms[currentRoom].get("trigger")
+    if triggercheck is not None:
+        if "dark" in triggercheck:
+            print("It's too dark in here, you should use a torch to lighten up a bit")
+    else:
+        # print an item if there is one
+        if "item" in rooms[currentRoom]:
+             print("you see: " + str(rooms[currentRoom]["item"]))
+        # print POI if there is one
+        if "person" in rooms[currentRoom]:
+            print("you see: " + rooms[currentRoom]["person"][0])
+            if rooms[currentRoom]["person"][0] == "princess":
+                print_lines("you won the game!", 
+                            "you played " + str(turn) + " turn(s)")
     # print other accessible rooms
     CurRoom = []
     for x in rooms[currentRoom]:
@@ -368,7 +376,8 @@ def fct_rooms():
                 
             13:{ "name" : "kitchen",
                  "north": [11,'opened'],
-                 "item" : ["sword"]},
+                 "item" : ["sword"],
+                 "trigger": ["dark"]},
                 
             14:{ "name" : "bathroom",
                  "north": [12,'opened'],
@@ -431,18 +440,24 @@ def fct_move(parameter, currentRoom, rooms, inventory):
     return(currentRoom)
     
 def fct_get(parameter, currentRoom, rooms, inventory):
-    # if the room contains an item, and the item is the one they want to get
-    if "item" in rooms[currentRoom] and parameter in rooms[currentRoom]["item"]:
-        # add the item to the inventory
-        inventory += [parameter]
-        # display a helpfull message
-        print(parameter + " got!")
-        # delete the item from the room
-        del rooms[currentRoom]["item"][rooms[currentRoom]["item"].index(parameter)]
-    # otherwise, if the item isn't there to get
+    #again check if it's too dark
+    triggercheck = rooms[currentRoom].get("trigger")
+    if triggercheck is not None:
+        if "dark" in triggercheck:
+            print("You can't pick up what you can't see!")
     else:
-        # tell them they can't get it
-        print("can't get " + parameter + "!")
+        # if the room contains an item, and the item is the one they want to get
+        if "item" in rooms[currentRoom] and parameter in rooms[currentRoom]["item"]:
+            # add the item to the inventory
+            inventory += [parameter]
+            # display a helpfull message
+            print(parameter + " got!")
+            # delete the item from the room
+            del rooms[currentRoom]["item"][rooms[currentRoom]["item"].index(parameter)]
+        # otherwise, if the item isn't there to get
+        else:
+            # tell them they can't get it
+            print("can't get " + parameter + "!")
     return(inventory)
     
 def fct_fight(parameter, currentRoom, rooms, inventory, turn):
@@ -488,6 +503,25 @@ def fct_drop(parameter, currentRoom, rooms, inventory):
         rooms[currentRoom]["item"] += [parameter]
         del inventory[inventory.index(parameter)]
         print("you dropped " + parameter + "!")
+    return(inventory)
+    
+def fct_use(parameter, currentRoom, rooms, inventory):
+    # look if the player has something to use
+    if inventory == [] or inventory[inventory.index(parameter)] != parameter:
+        print("you can't use anything")
+    else:
+        if parameter == "torch":
+            triggercheck = rooms[currentRoom].get("trigger")
+            if triggercheck is not None:
+                if "dark" in triggercheck:
+                    del rooms[currentRoom]["trigger"]
+                    del inventory[inventory.index(parameter)]
+                    print("you used " + parameter + "!")
+                    print("The room is now lit!")
+            else:
+                print("The room is already lit!")
+        else:
+            print("Using " + parameter + " would have no use!")
     return(inventory)
     
 def fct_exit(turn, playerstatus):
@@ -569,6 +603,7 @@ def random_dice(numberdices=6, numberoutput=2, exclusion = ' '):
     # if 0 or less dices are used
     else:
         return(0)
+
     
 def fct_fight_rat(playerstatus, enemystatus, enemy, currentRoom, rooms):
     # look for any exclusion criteria
