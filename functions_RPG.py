@@ -275,9 +275,7 @@ def showStatus(currentRoom, rooms, turn, inventory):
     CurRoom = []
     for x in rooms[currentRoom]:
         if x in parameter_RPG.directions:
-            if 'hidden' in rooms[currentRoom].get(x):
-                break
-            else:
+            if not 'hidden' in rooms[currentRoom].get(x):
                 CurRoom.append(x)
     if len(CurRoom) == 1:
     	print("There's a door leading: " + str(CurRoom))
@@ -376,7 +374,7 @@ def fct_rooms():
                  "north": [12,'opened'],
                  "item" : ["soap"]},
                 
-            21:{ "name" : "stair",
+            21:{ "name" : "staircase",
                  "east" : [22,'opened'],
                  "south": [23,'opened','hidden'],
                  "down" : [11,'opened'],
@@ -406,23 +404,27 @@ def fct_move(parameter, currentRoom, rooms, inventory):
     # check that they are allowed wherever they want to go
     if parameter in rooms[currentRoom]:
         # check if the door to the new room is locked
-        if "locked" in rooms[currentRoom][parameter]:
-            print("door locked")
-            if "key" in inventory:
-               print("want to use the key? [Y/N]")
-               answer = input(">").lower()
-               if answer == "y" or answer == "yes" or answer == "z":
-                   print("opens the door with the key")
-                   # change the door property
-                   rooms[currentRoom][parameter][rooms[currentRoom][parameter].index("locked")] = 'opened'
-                   # set the current room to the new room
-                   currentRoom = rooms[currentRoom][parameter][0]
-                   # change the lock of the old room from the new room
-                   other = parameter_RPG.directions[(parameter_RPG.directions.index(parameter)+3)%6]
-                   rooms[currentRoom][other][rooms[currentRoom][other].index("locked")] = 'opened'                  
+        if not "hidden" in rooms[currentRoom][parameter]:
+            if "locked" in rooms[currentRoom][parameter]:
+                print("door locked")
+                if "key" in inventory:
+                   print("want to use the key? [Y/N]")
+                   answer = input(">").lower()
+                   if answer == "y" or answer == "yes" or answer == "z":
+                       print("opens the door with the key")
+                       # change the door property
+                       rooms[currentRoom][parameter][rooms[currentRoom][parameter].index("locked")] = 'opened'
+                       # set the current room to the new room
+                       currentRoom = rooms[currentRoom][parameter][0]
+                       # change the lock of the old room from the new room
+                       other = parameter_RPG.directions[(parameter_RPG.directions.index(parameter)+3)%6]
+                       rooms[currentRoom][other][rooms[currentRoom][other].index("locked")] = 'opened'                  
+            else:
+                # set the current room to the new room
+                currentRoom = rooms[currentRoom][parameter][0]
         else:
-            # set the current room to the new room
-            currentRoom = rooms[currentRoom][parameter][0]
+            #This extra line is needed or else nothing is written in case of a hidden room
+            print("you can't go that way!")
     # if there is no door/link to the new room
     else:               
         print("you can't go that way!")
