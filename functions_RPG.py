@@ -243,7 +243,7 @@ def showInstructions():
                 "'fight [person]'", 
                 "'credits'")
     
-def showStatus(currentRoom, rooms, turn, inventory):
+def showStatus(currentRoom, rooms, turn, inventory, torch):
     """
     the user can see in which room he is standing
     also his inventory is shown to him   
@@ -253,20 +253,29 @@ def showStatus(currentRoom, rooms, turn, inventory):
     input:
         none
     output:
-        three lines:
+        five lines:
             place
             inventory
+            torch burn duration
             persons
             possible directions
     """
     # print the player's current status
     print("---------------------------")
     print("you are in the " + rooms[currentRoom]["name"])
+    #show descriptions for the room
+    if "detail" in rooms[currentRoom]:
+        print(rooms[currentRoom]["detail"])
     # print the current inventory
     print("inventory: " + str(inventory))
+    #show the torch's burn duration
+    if torch == 0:
+        print("You have no lit torch")
+    else:
+        print("Your torch will burn for: " + str(torch) + " turns!")
     # Triggercheck: check if room is too dark to see
     triggercheck = rooms[currentRoom].get("trigger")
-    if triggercheck is not None:
+    if triggercheck is not None and torch == 0:
         if "dark" in triggercheck:
             print("It's too dark in here, you should use a torch to lighten up a bit")
     else:
@@ -371,8 +380,7 @@ def fct_rooms():
                 
             12:{ "name" : "bedroom",
                  "west" : [11,'opened'],
-                 "south": [14,'opened'],
-                 "item" : ["key"]},
+                 "south": [14,'opened'],},
                 
             13:{ "name" : "kitchen",
                  "north": [11,'opened'],
@@ -380,10 +388,12 @@ def fct_rooms():
                  "trigger": ["dark"]},
                 
             14:{ "name" : "bathroom",
+                 "detail":"You see traces of a fight, the sink is broken.",
                  "north": [12,'opened'],
                  "item" : ["soap"]},
                 
             21:{ "name" : "staircase",
+                 "detail":"You see a dusty old bookshelve.", 
                  "east" : [22,'opened'],
                  "south": [23,'opened','hidden','book'],
                  "down" : [11,'opened'],
@@ -399,7 +409,8 @@ def fct_rooms():
             23:{ "name" : "terrace",
                  "north": [21,'opened'],
                  "trigger": ["dark"],
-                 "person": ["bat",1]},
+                 "person": ["bat",1],
+                 "item" : ["key"]},
                 
             24:{ "name" : "study",
                  "north": [22,'opened'],
@@ -441,10 +452,10 @@ def fct_move(parameter, currentRoom, rooms, inventory):
         print("you can't go that way!")
     return(currentRoom)
     
-def fct_get(parameter, currentRoom, rooms, inventory):
+def fct_get(parameter, currentRoom, rooms, inventory, torch):
     #again check if it's too dark
     triggercheck = rooms[currentRoom].get("trigger")
-    if triggercheck is not None:
+    if triggercheck is not None and torch == 0:
         if "dark" in triggercheck:
             print("You can't pick up what you can't see!")
     else:
@@ -462,10 +473,10 @@ def fct_get(parameter, currentRoom, rooms, inventory):
             print("can't get " + parameter + "!")
     return(inventory)
     
-def fct_fight(parameter, currentRoom, rooms, inventory, turn):
+def fct_fight(parameter, currentRoom, rooms, inventory, turn, torch):
     #again check if it's too dark
     triggercheck = rooms[currentRoom].get("trigger")
-    if triggercheck is not None:
+    if triggercheck is not None and torch == 0:
         if "dark" in triggercheck:
             print("You can't fight what you can't see!")
     else:
@@ -513,7 +524,7 @@ def fct_drop(parameter, currentRoom, rooms, inventory):
         print("you dropped " + parameter + "!")
     return(inventory)
     
-def fct_use(parameter, currentRoom, rooms, inventory):
+def fct_use(parameter, currentRoom, rooms, inventory, torch):
     # look if the player has something to use
     if inventory == [] or inventory[inventory.index(parameter)] != parameter:
         print("you can't use anything")
@@ -521,18 +532,17 @@ def fct_use(parameter, currentRoom, rooms, inventory):
         UsableItems = []
         for x in rooms[currentRoom]:
             if x is not "item":
-                if parameter in rooms[currentRoom].get(x):
-                    UsableItems.append(x)
+                if x is not "detail":
+                    if parameter in rooms[currentRoom].get(x):
+                        UsableItems.append(x)
         if parameter == "torch":
-            triggercheck = rooms[currentRoom].get("trigger")
-            if triggercheck is not None:
-                if "dark" in triggercheck:
-                    del rooms[currentRoom]["trigger"]
-                    del inventory[inventory.index(parameter)]
-                    print("you used " + parameter + "!")
-                    print("The room is now lit!")
+            if torch == 0:
+                torch = 3
+                print("You lit your torch for 3 turns")
             else:
-                print("The room is already lit!")
+                torch += 3
+                print("You extended your torch's burning duration by 3")
+            del inventory[inventory.index(parameter)]
         elif UsableItems is not None:
             for x in UsableItems:
                 rooms[currentRoom].get(x).remove(parameter)
@@ -542,7 +552,7 @@ def fct_use(parameter, currentRoom, rooms, inventory):
                 print("A door has opened!")
         else:
             print("Using " + parameter + " would have no use!")
-    return(inventory)
+    return(inventory, torch)
     
 def fct_exit(turn, playerstatus):
     print_lines("thank you for playing", 

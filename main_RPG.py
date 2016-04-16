@@ -44,7 +44,7 @@ def credits_game():
     functions_RPG.print_lines("support","missing","")
     functions_RPG.print_lines("special thanks","Kopfkino")
             
-def fct_main(currentRoom, inventory , turn, rooms):
+def fct_main(currentRoom, inventory , turn, rooms, torch):
     time_window = 0
     
     playerstatus = functions_RPG.generate_char()
@@ -56,7 +56,7 @@ def fct_main(currentRoom, inventory , turn, rooms):
         # first time stamp
         first_time_stamp = time.time()
         
-        functions_RPG.showStatus(currentRoom, rooms, turn, inventory)
+        functions_RPG.showStatus(currentRoom, rooms, turn, inventory, torch)
         
         # get the player's next move
         # .split() breaks it up into a list array
@@ -72,6 +72,8 @@ def fct_main(currentRoom, inventory , turn, rooms):
                     if directions.count(move[1]) == 1:
                         currentRoom = functions_RPG.fct_move(move[1], currentRoom, rooms, inventory)
                         turn += 1
+                        if torch != 0:
+                            torch -= 1
                     else:
                         print("burn the heretic, this is no legal direction!")
                 else: 
@@ -80,14 +82,14 @@ def fct_main(currentRoom, inventory , turn, rooms):
             # if they type 'get' first
             elif move[0] == "get":
                 if len(move) == 2:
-                    inventory = functions_RPG.fct_get(move[1], currentRoom, rooms, inventory)
+                    inventory = functions_RPG.fct_get(move[1], currentRoom, rooms, inventory, torch)
                 else: 
                     print("false input")
                     
             # if they type 'fight' first
             elif move[0] == "fight":
                 if len(move) == 2:               
-                    functions_RPG.fct_fight(move[1], currentRoom, rooms, inventory, turn)
+                    functions_RPG.fct_fight(move[1], currentRoom, rooms, inventory, turn, torch)
                     #functions_RPG.fct_fight_rat(playerstatus, parameter_enemies_RPG.enemystatus, move[1], currentRoom, rooms)
                 else: 
                     print("false input")
@@ -102,7 +104,10 @@ def fct_main(currentRoom, inventory , turn, rooms):
             #if the player wants to use something
             elif move[0] == "use":
                 if len(move) == 2:
-                    inventory = functions_RPG.fct_use(move[1], currentRoom, rooms, inventory)
+                    invNtor = functions_RPG.fct_use(move[1], currentRoom, rooms, inventory, torch)
+                    inventory = invNtor[0]
+                    torch = invNtor[1]
+                    #inventory = functions_RPG.fct_use(move[1], currentRoom, rooms, inventory, torch)
                 else: 
                     print("false input")
 
@@ -147,6 +152,8 @@ if __name__=='__main__':
     currentRoom = 11
     # an inventory, which is initially empty
     inventory = []
+    #torch burn duration
+    torch = 0
     # initialize the turns
     turn = 1
     # version number
@@ -155,4 +162,4 @@ if __name__=='__main__':
     # generate rooms
     rooms = functions_RPG.fct_rooms()
     # start the game
-    fct_main(currentRoom, inventory, turn, rooms)
+    fct_main(currentRoom, inventory, turn, rooms, torch)
