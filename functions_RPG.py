@@ -385,7 +385,7 @@ def fct_rooms():
                 
             21:{ "name" : "staircase",
                  "east" : [22,'opened'],
-                 "south": [23,'opened','hidden'],
+                 "south": [23,'opened','hidden','book'],
                  "down" : [11,'opened'],
                  "item" : ["torch"]},
                 
@@ -397,7 +397,9 @@ def fct_rooms():
                  "person": ["bat",1]},
                 
             23:{ "name" : "terrace",
-                 "north": [21,'opened']},
+                 "north": [21,'opened'],
+                 "trigger": ["dark"],
+                 "person": ["bat",1]},
                 
             24:{ "name" : "study",
                  "north": [22,'opened'],
@@ -461,39 +463,45 @@ def fct_get(parameter, currentRoom, rooms, inventory):
     return(inventory)
     
 def fct_fight(parameter, currentRoom, rooms, inventory, turn):
-    # check if someone is in the room
-    # check that they are allowed whoever they want to fight
-    if "person" in rooms[currentRoom] and parameter in rooms[currentRoom]["person"]:
-        # if the player has a sword he is better at fighting
-        if rooms[currentRoom]['person'][1] == 1:
-            if "sword" in inventory:
-                if(randint(1,6+1)>2):
-                    print("enemy died")
-                    # if the enemy died delete it from the room
-                    del rooms[currentRoom]["person"]
-                else:
-                    print("you died")
-                    print("you played " + str(turn) + " turn(s)")
-                    # waits for 10 seconds to close the game
-                    print("the game closes in 10 seconds")
-                    time.sleep(10)
-                    raise SystemExit
-            else:
-                if(randint(1,6+1)>4):
-                    print("enemy died")
-                    # if the enemy died delete it from the room
-                    del rooms[currentRoom]["person"]
-                else:
-                    print("you died")
-                    print("you played " + str(turn) + " turn(s)")
-                    # waits for 10 seconds to close the game
-                    print("the game closes in 10 seconds")
-                    time.sleep(10)
-                    raise SystemExit
-        else:
-            print("this person can't be attacked")
+    #again check if it's too dark
+    triggercheck = rooms[currentRoom].get("trigger")
+    if triggercheck is not None:
+        if "dark" in triggercheck:
+            print("You can't fight what you can't see!")
     else:
-        print("you are fighting against your own shadow")
+        # check if someone is in the room
+        # check that they are allowed whoever they want to fight
+        if "person" in rooms[currentRoom] and parameter in rooms[currentRoom]["person"]:
+            # if the player has a sword he is better at fighting
+            if rooms[currentRoom]['person'][1] == 1:
+                if "sword" in inventory:
+                    if(randint(1,6+1)>2):
+                        print("enemy died")
+                        # if the enemy died delete it from the room
+                        del rooms[currentRoom]["person"]
+                    else:
+                        print("you died")
+                        print("you played " + str(turn) + " turn(s)")
+                        # waits for 10 seconds to close the game
+                        print("the game closes in 10 seconds")
+                        time.sleep(10)
+                        raise SystemExit
+                else:
+                    if(randint(1,6+1)>4):
+                        print("enemy died")
+                        # if the enemy died delete it from the room
+                        del rooms[currentRoom]["person"]
+                    else:
+                        print("you died")
+                        print("you played " + str(turn) + " turn(s)")
+                        # waits for 10 seconds to close the game
+                        print("the game closes in 10 seconds")
+                        time.sleep(10)
+                        raise SystemExit
+            else:
+                print("this person can't be attacked")
+        else:
+            print("you are fighting against your own shadow")
             
 def fct_drop(parameter, currentRoom, rooms, inventory):
     # look if the player has something to drop
@@ -510,6 +518,11 @@ def fct_use(parameter, currentRoom, rooms, inventory):
     if inventory == [] or inventory[inventory.index(parameter)] != parameter:
         print("you can't use anything")
     else:
+        UsableItems = []
+        for x in rooms[currentRoom]:
+            if x is not "item":
+                if parameter in rooms[currentRoom].get(x):
+                    UsableItems.append(x)
         if parameter == "torch":
             triggercheck = rooms[currentRoom].get("trigger")
             if triggercheck is not None:
@@ -520,6 +533,13 @@ def fct_use(parameter, currentRoom, rooms, inventory):
                     print("The room is now lit!")
             else:
                 print("The room is already lit!")
+        elif UsableItems is not None:
+            for x in UsableItems:
+                rooms[currentRoom].get(x).remove(parameter)
+                rooms[currentRoom].get(x).remove('hidden')
+                del inventory[inventory.index(parameter)]
+                print("you used " + parameter + "!")
+                print("A door has opened!")
         else:
             print("Using " + parameter + " would have no use!")
     return(inventory)
