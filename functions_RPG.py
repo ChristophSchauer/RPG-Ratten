@@ -379,7 +379,7 @@ def fct_rooms():
              "item" : ["soap"]},
             
         21:{ "name" : "staircase",
-             "detail":"You see a dusty old bookshelve.", 
+             "detail":"You see a dusty old bookshelf.", 
              "east" : [22,'opened'],
              "south": [23,'opened','hidden','book'],
              "down" : [11,'opened'],
@@ -410,7 +410,7 @@ def fct_rooms():
     
 def fct_move(parameter, currentRoom, rooms, inventory):
     # check that they are allowed wherever they want to go
-    if parameter in rooms[currentRoom]:
+    if parameter in rooms[currentRoom].keys():
         # check if the door to the new room is locked
         if not "hidden" in rooms[currentRoom][parameter]:
             if "locked" in rooms[currentRoom][parameter]:
