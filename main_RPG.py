@@ -37,11 +37,11 @@ from parameter_RPG import directions
 import time
 
 # version number
-version = 'V0_2016.04.16_19_CS'
+version = 'V0_2016.04.17_20_CS'
 
 def credits_game():
     functions_RPG.print_lines("development and programming","Christoph","Hias","")
-    functions_RPG.print_lines("testing","Flo","Gerfried","Alex","")
+    functions_RPG.print_lines("testing","Flo","Gerfried","Alex","Steffi","")
     functions_RPG.print_lines("support","missing","")
     functions_RPG.print_lines("special thanks","Kopfkino")
 

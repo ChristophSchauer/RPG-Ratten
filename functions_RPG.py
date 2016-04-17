@@ -60,6 +60,8 @@ History:
 [2016.04.16, CS]:   ISSUE#21: at the end of the save name the actual time stamp
                     is added;
 [2016.04.16, MG]:   ISSUE#19: Darkness trigger and "use" function added;
+[2016.04.17, CS]:   ISSUE#24: it is checked, if the parameter can be counted in
+                    the inventory;
 """
 import parameter_RPG
 
@@ -502,7 +504,7 @@ def fct_fight(parameter, currentRoom, rooms, inventory, turn, torch):
             
 def fct_drop(parameter, currentRoom, rooms, inventory):
     # look if the player has something to drop
-    if inventory == [] or inventory[inventory.index(parameter)] != parameter:
+    if inventory == [] or inventory.count(parameter) == 0 or inventory[inventory.index(parameter)] != parameter :
         print("you can't drop anything")
     else:
         rooms[currentRoom]["item"] += [parameter]
