@@ -304,7 +304,7 @@ def showStatus(currentRoom, rooms, turn, inventory, torch):
     	print("There are doors leading: " + str(CurRoom))
     print("---------------------------")
                        
-def generate_char():
+def generate_char(name):
     playerstatus_dummy = {
         "name"      : [],
         "clever"    : [],
@@ -321,6 +321,8 @@ def generate_char():
     
     print("name your hero please:")
     playerstatus_dummy["name"] = input(">")
+    # write the command to the history
+    write_history(name, "name your hero please: " + playerstatus_dummy["name"])
 
     value = 0
     while (value != 8):
@@ -337,6 +339,8 @@ def generate_char():
                     "keiner der Attribute dar mehr als 3 PUnkte haben")
         """
         data = input(">").split(sep= ",")
+        # write the command to the history
+        write_history(name, 'values: ' + str(data))
         for index in range(4):
             # check if the values from the user are between 0 and 3
             if int(data[index]) <= 3 and int(data[index]) >= 0:
@@ -410,7 +414,7 @@ def fct_rooms():
             }
     return(rooms)
     
-def fct_move(parameter, currentRoom, rooms, inventory):
+def fct_move(parameter, currentRoom, rooms, inventory, name):
     # check that they are allowed wherever they want to go
     if parameter in rooms[currentRoom].keys():
         # check if the door to the new room is locked
@@ -420,6 +424,8 @@ def fct_move(parameter, currentRoom, rooms, inventory):
                 if "key" in inventory:
                    print("want to use the key? [Y/N]")
                    answer = input(">").lower()
+                   # write the command to the history
+                   write_history(name, 'want to use the key? ' + answer)
                    if answer == "y" or answer == "yes" or answer == "z":
                        print("opens the door with the key")
                        # change the door property
@@ -514,7 +520,7 @@ def fct_drop(parameter, currentRoom, rooms, inventory):
     
 def fct_use(parameter, currentRoom, rooms, inventory, torch):
     # look if the player has something to use
-    if inventory == [] or inventory[inventory.index(parameter)] != parameter:
+    if inventory == [] or inventory.count(parameter) == 0 or inventory[inventory.index(parameter)] != parameter :
         print("you can't use anything")
     else:
         UsableItems = []
@@ -542,11 +548,13 @@ def fct_use(parameter, currentRoom, rooms, inventory, torch):
             print("Using " + parameter + " would have no use!")
     return(inventory, torch)
     
-def fct_exit(turn, playerstatus):
+def fct_exit(turn, playerstatus, name):
     print_lines("thank you for playing", 
                "you played " + str(turn) + " turn(s)", 
               "want to save your char (y/n)?")
     answer = input(">").lower()
+    # write the command to the history
+    write_history(name, "want to save your char (y/n)? " + answer)
     if answer == 'y' or answer == 'yes' or answer == "z":
         print("where do you want to save your char?")
         path = getdir(DialogTitle='Select folder:')
@@ -559,8 +567,8 @@ def fct_exit(turn, playerstatus):
 def fct_save_game(auto, playerstatus, rooms, currentRoom, inventory, turn):
     # get the localtime variables
     localtime = time.localtime(time.time())
-    # make the save time stamp
-    save_time = str(localtime.tm_mday)+'_'+str(localtime.tm_hour)+'_'+str(localtime.tm_min)+'_'+str(localtime.tm_sec)
+    # make the save time stamp (year_month_day_hour_min_sec)
+    save_time = str(localtime.tm_year) +'_'+ str(localtime.tm_mon) +'_'+ str(localtime.tm_mday) +'_'+ str(localtime.tm_hour) +'_'+ str(localtime.tm_min) +'_'+ str(localtime.tm_sec)
     # if called from the auto save (auto=1)
     if auto == 1:
         output = []
@@ -593,6 +601,11 @@ def fct_load_game():
     print('game loaded')
     return(data[0],data[1],data[2],data[3],data[4])
     
+def write_history(name, command):
+    # append the player's command to the history
+    with open(name, "a") as historyfile:
+        historyfile.write(' '.join(command)+'\n')
+    
 def random_dice(numberdices=6, numberoutput=2, exclusion = ' '):
     # if more than 0 dices are used
     if numberdices > 0:
@@ -623,7 +636,7 @@ def random_dice(numberdices=6, numberoutput=2, exclusion = ' '):
         return(0)
 
     
-def fct_fight_rat(playerstatus, enemystatus, enemy, currentRoom, rooms):
+def fct_fight_rat(playerstatus, enemystatus, enemy, currentRoom, rooms, name):
     # look for any exclusion criteria
     if playerstatus["pack"] == 'collector':
         player_exclusion_init = 6
@@ -699,6 +712,8 @@ def fct_fight_rat(playerstatus, enemystatus, enemy, currentRoom, rooms):
                         if fight_array[1,7] == 1:
                             print("(4) shake of overwhelming")
                     decision = int(input(">"))
+                    # write the command to the history
+                    write_history(name, 'fight: ' + decision)
                     # Wert Spieler und Gegner bestimmen
                     player = random_dice(numberdices=fight_array[0,0]+fight_array[0,1], numberoutput=2, exclusion=' ') - int(player_malus)
                     # falls der Gegner nicht bewusstlos ist

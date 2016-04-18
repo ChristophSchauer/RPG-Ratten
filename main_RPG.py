@@ -29,6 +29,8 @@ History:
 [2016.04.16, CS]:   ISSUE#21: implement the autosave;
 [2016.04.16, MG]:   ISSUE#19: "use" function called
 [2016.04.16, CS]:   ISSUE#22: shift the load game to the main function;
+[2016.04.18, CS]:   ISSUE#26: add a history of the player's commands to the game, 
+                    implemented it also in all the subfunctions with input in them;
 """
 # import the functions
 import functions_RPG
@@ -37,7 +39,7 @@ from parameter_RPG import directions
 import time
 
 # version number
-version = 'V0_2016.04.17_20_CS'
+version = 'V0_2016.04.18_09_CS'
 
 def credits_game():
     functions_RPG.print_lines("development and programming","Christoph","Hias","")
@@ -49,6 +51,15 @@ def fct_main(currentRoom, inventory , turn, torch):
     # time window until the game makes an autosave
     time_window = 0
     
+    # generate the save_time stamp for the history
+    # get the localtime variables
+    localtime = time.localtime(time.time())
+    # make the save time stamp (year_month_day_hour_min_sec)
+    save_time = str(localtime.tm_year) +'_'+ str(localtime.tm_mon) +'_'+ str(localtime.tm_mday) +'_'+ str(localtime.tm_hour) +'_'+ str(localtime.tm_min) +'_'+ str(localtime.tm_sec)
+    # generate file name
+    history = 'history_'+save_time+'.txt'
+    
+    
     # ask the player, if he wants to load a game
     functions_RPG.print_lines("want to load a room layout (Y/N)?",
                               "if N, the default training area is loaded.")
@@ -57,18 +68,21 @@ def fct_main(currentRoom, inventory , turn, torch):
     print_lines("möchtest du eine Karte laden (J/N)?",
           "falls N, dann wird das Trainingsareal geladen.")
     '''
-    decision = input('>').lower()
+    decision = input('>').lower()    
+    # write the command to the history
+    functions_RPG.write_history(history, decision)
+    
     if decision == 'y' or decision == 'yes' or decision == 'z':
         # load the data of the save game
         playerstatus, rooms, currentRoom, inventory, turn = functions_RPG.fct_load_game()
     else:
         # generate the character
-        playerstatus = functions_RPG.generate_char()
+        playerstatus = functions_RPG.generate_char(history)
         # generate rooms
         rooms = functions_RPG.fct_rooms()
        
     functions_RPG.showInstructions()
-    
+        
     # loop infinitely
     while True:
         # first time stamp
@@ -80,7 +94,9 @@ def fct_main(currentRoom, inventory , turn, torch):
         # .split() breaks it up into a list array
         # eg typing 'go east' would give the list:
         # ['go','east']
-        move = input(">").lower().split()
+        move = input(">").lower().split()        
+        # write the command to the history
+        functions_RPG.write_history(history, move)      
         
         # check if there is any input
         if len(move) != 0:
@@ -88,7 +104,7 @@ def fct_main(currentRoom, inventory , turn, torch):
             if move[0] == "go":
                 if len(move) == 2:
                     if directions.count(move[1]) == 1:
-                        currentRoom = functions_RPG.fct_move(move[1], currentRoom, rooms, inventory)
+                        currentRoom = functions_RPG.fct_move(move[1], currentRoom, rooms, inventory, history)
                         turn += 1
                         if torch != 0:
                             torch -= 1
@@ -108,7 +124,7 @@ def fct_main(currentRoom, inventory , turn, torch):
             elif move[0] == "fight":
                 if len(move) == 2:               
                     functions_RPG.fct_fight(move[1], currentRoom, rooms, inventory, turn, torch)
-                    #functions_RPG.fct_fight_rat(playerstatus, parameter_enemies_RPG.enemystatus, move[1], currentRoom, rooms)
+                    #functions_RPG.fct_fight_rat(playerstatus, parameter_enemies_RPG.enemystatus, move[1], currentRoom, rooms, history)
                 else: 
                     print("false input")
                         
@@ -135,7 +151,7 @@ def fct_main(currentRoom, inventory , turn, torch):
                 
             # if the player wants to end the game        
             elif move[0] == "exit":
-                functions_RPG.fct_exit(turn, playerstatus)
+                functions_RPG.fct_exit(turn, playerstatus, history)
                 
             # if the player wants to end the game        
             elif move[0] == "mission":
