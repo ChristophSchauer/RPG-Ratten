@@ -265,9 +265,6 @@ def showStatus(currentRoom, rooms, turn, inventory, torch):
     # print the player's current status
     print("---------------------------")
     print("you are in the " + rooms[currentRoom]["name"])
-    #show descriptions for the room
-    if "detail" in rooms[currentRoom]:
-        print(rooms[currentRoom]["detail"])
     # print the current inventory
     print("inventory: " + str(inventory))
     #show the torch's burn duration
@@ -281,6 +278,9 @@ def showStatus(currentRoom, rooms, turn, inventory, torch):
         if "dark" in triggercheck:
             print("It's too dark in here, you should use a torch to lighten up a bit")
     else:
+        #show descriptions for the room
+        if "detail" in rooms[currentRoom]:
+            print(rooms[currentRoom]["detail"])
         # print an item if there is one
         if "item" in rooms[currentRoom]:
              print("you see: " + str(rooms[currentRoom]["item"]))
