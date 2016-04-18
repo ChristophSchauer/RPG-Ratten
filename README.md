@@ -8,7 +8,9 @@ this is a roleplay game, based on Ratten!, written by Kopfkino. in the game the 
 When stable, the player interacts with the game through command line window. Every turn the game tells the player in which room he is standing, which items he sees, which items are in his inventory, which persons he sees and in which directions he can go. The fights are 1on1. The setting of the game is a test environment to try different things such hidden things (eg doors).
 
 ### Version 1.1
-When stable, the fighting system of the game will be implemented. In the fight the player can attack, bite tight or overpower the enemy, which can also be done by the enemy. If the player is overpowered or the enemy has bite tight in him, he can try to loose himself from the enemy.
+When stable the following is improved:
+- help command is added: from a player it was asked to be able to see the commands
+- fighting system of the game will be implemented. In the fight the player can attack, bite tight or overpower the enemy, which can also be done by the enemy. If the player is overpowered or the enemy has bite tight in him, he can try to loose himself from the enemy.
 
 ## Credits
 Contributions from the following people:
