@@ -52,16 +52,18 @@ History:
 [2016.04.11, CS]:   ISSUE#16: changed all the naming of the interaction in
                     english;
                     ISSUE#18: changed the call of tkinter;
-[2016.04.13, CS]:   ISSUE#17: long texts are not translated, they are checked with an if 
-                    clause and it exists a english and a german version of the text;                    
+[2016.04.13, CS]:   ISSUE#17: long texts are not translated, they are checked 
+                    with an if clause and it exists a english and a german 
+                    version of the text;                    
 [2016.04.11, MG]:   ISSUE#13: Hidden Rooms won't be shown;
-[2016.04.15, CS]:   ISSUE#21: write the function; also insert load funcction, but this one
-                    can't be assessed by the user until now;
+[2016.04.15, CS]:   ISSUE#21: write the function; also insert load funcction, 
+                    but this one can't be assessed by the user until now;
 [2016.04.16, CS]:   ISSUE#21: at the end of the save name the actual time stamp
                     is added;
 [2016.04.16, MG]:   ISSUE#19: Darkness trigger and "use" function added;
 [2016.04.17, CS]:   ISSUE#24: it is checked, if the parameter can be counted in
                     the inventory;
+[2016.04.18, CS]:   ISSUE#29: add the command 'help' in showInstructions; 
 """
 import parameter_RPG
 
@@ -233,11 +235,12 @@ def showInstructions():
     # print a main menu and the commands
     print_lines("RPG Game", 
                 "========", 
-                "commands:", 
-                "'exit'",
-                "'save'",
-                "'status'",
-                "'mission'", 
+                "commands:",
+                "'help'     - show the commands",
+                "'exit'     - exit the game, you can save your character",
+                "'save'     - save the game to continue it later",
+                "'status'   - show the players character",
+                "'mission'  - show the mission of the game", 
                 "'go [north, east, south, west, up, down]'", 
                 "'get [item]'", 
                 "'use [item]'",

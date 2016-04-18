@@ -23,14 +23,16 @@ History:
                     fight is in the room;
 [2016.04.11, CS]:   ISSUE#16: changed all the naming of the interaction in
                     english;
-[2016.04.14, CS]:   insert Version of the program: consists of game version, date, hour 
-                    and initials (eg V0_2016.04.14_15_CS);
+[2016.04.14, CS]:   insert Version of the program: consists of game version, 
+                    date, hour and initials (eg V0_2016.04.14_15_CS);
 [2016.04.15, CS]:   ISSUE#21: insert the save command;
 [2016.04.16, CS]:   ISSUE#21: implement the autosave;
 [2016.04.16, MG]:   ISSUE#19: "use" function called
 [2016.04.16, CS]:   ISSUE#22: shift the load game to the main function;
-[2016.04.18, CS]:   ISSUE#26: add a history of the player's commands to the game, 
-                    implemented it also in all the subfunctions with input in them;
+[2016.04.18, CS]:   ISSUE#26: add a history of the player's commands to the 
+                    game, implemented it also in all the subfunctions with 
+                    input in them;
+[2016.04.18, CS]:   ISSUE#29: add the help function to the main loop;                    
 """
 # import the functions
 import functions_RPG
@@ -39,11 +41,11 @@ from parameter_RPG import directions
 import time
 
 # version number
-version = 'V0_2016.04.18_09_CS'
+version = 'V1_2016.04.18_21_CS'
 
 def credits_game():
     functions_RPG.print_lines("development and programming","Christoph","Hias","")
-    functions_RPG.print_lines("testing","Flo","Gerfried","Alex","Steffi","")
+    functions_RPG.print_lines("testing","Flo","Alex","Steffi","Patrick","Taratsamura","")
     functions_RPG.print_lines("support","missing","")
     functions_RPG.print_lines("special thanks","Kopfkino")
 
@@ -163,6 +165,10 @@ def fct_main(currentRoom, inventory , turn, torch):
             # if the player wants to save his status
             elif move[0] == "save":
                 functions_RPG.fct_save_game(0, playerstatus, rooms, currentRoom, inventory, turn)
+                
+            # if the player wants to see the commands
+            elif move[0] == "help":
+                functions_RPG.showInstructions()
                 
             # if there is a false input from the player
             else: 
