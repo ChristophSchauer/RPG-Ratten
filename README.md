@@ -9,13 +9,14 @@ When stable, the player interacts with the game through command line window. Eve
 
 ### Version 1.1
 When stable the following is improved:
-- help command is added: from a player it was asked to be able to see the commands
-- fighting system of the game will be implemented. In the fight the player can attack, bite tight or overpower the enemy, which can also be done by the enemy. If the player is overpowered or the enemy has bite tight in him, he can try to loose himself from the enemy.
+* help command is added: from a player it was asked to be able to see the commands
+* fighting system of the game will be implemented. In the fight the player can attack, bite tight or overpower the enemy, which can also be done by the enemy. If the player is overpowered or the enemy has bite tight in him, he can try to loose himself from the enemy.
 
 ## Credits
 Contributions from the following people:
 * the basic trunk code is from [usingpython](http://usingpython.com/python-rpg-game/ "python-rpg-game")
-* the pictures in the folder are from the kaushambi mall. the gui trunk is from [Sébastien SAUVAGE](http://sebsauvage.net/python/gui/ "python GUI")
+* the pictures in the folder are from the kaushambi mall. 
+* the gui trunk is from [Sébastien SAUVAGE](http://sebsauvage.net/python/gui/ "python GUI")
 * [Thomas Haslwanter](http://work.thaslwanter.at/ "Homepage")
 
 ## Help
