@@ -45,7 +45,7 @@ version = 'V1_2016.04.18_21_CS'
 
 def credits_game():
     functions_RPG.print_lines("development and programming","Christoph","Hias","")
-    functions_RPG.print_lines("testing","Flo","Alex","Steffi","Patrick","Taratsamura","")
+    functions_RPG.print_lines("testing","Flo","Alex","Steffi","Patrick","Ben","")
     functions_RPG.print_lines("support","missing","")
     functions_RPG.print_lines("special thanks","Kopfkino")
 
