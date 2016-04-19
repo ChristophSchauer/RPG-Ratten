@@ -2,7 +2,9 @@
 Header
 
 @author: Christoph
-Version: 0.1
+Version:            1.0
+
+Programmed with:    3.4.4.1
 
 History:
 [2016.03.23, CS]:   initial setup; copy the main code from: 
@@ -32,7 +34,8 @@ History:
 [2016.04.18, CS]:   ISSUE#26: add a history of the player's commands to the 
                     game, implemented it also in all the subfunctions with 
                     input in them;
-[2016.04.18, CS]:   ISSUE#29: add the help function to the main loop;                    
+[2016.04.18, CS]:   ISSUE#29: add the help function to the main loop;  
+[2016.04.19, CS]:   change the credits; change to version 1.0;                 
 """
 # import the functions
 import functions_RPG

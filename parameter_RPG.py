@@ -3,7 +3,9 @@
 Header
 
 @author: Christoph
-Version : 0.1
+Version :           1.0
+
+Programmed with:    3.4.4.1
 
 History:
 [2016.03.25, CS]:   start with an enemy array; 
@@ -16,6 +18,7 @@ History:
                     english;
 [2016.04.13, CS]:   ISSUE#17: start with the dictionary for 'generate_char', 'showStatus',
                     fct_rooms, fct_move, fct_get, fct_drop, fct_fight;
+[2016.04.19, CS]:   change to version 1.0;  
 """
 # sorted to be used for the ring
 directions = ['north','east','up','south','west','down']

@@ -3,7 +3,9 @@
 Header
 
 @author: Christoph
-Version : 0.1
+Version :           1.0
+
+Programmed with:    3.4.4.1
 
 History:
 [2016.03.24, CS]:   initial setup; put in all the functions of the main_RPG;
@@ -64,6 +66,7 @@ History:
 [2016.04.17, CS]:   ISSUE#24: it is checked, if the parameter can be counted in
                     the inventory;
 [2016.04.18, CS]:   ISSUE#29: add the command 'help' in showInstructions; 
+[2016.04.19, CS]:   change to version 1.0;  
 """
 import parameter_RPG
 
