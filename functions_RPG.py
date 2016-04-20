@@ -67,7 +67,16 @@ History:
                     the inventory;
 [2016.04.18, CS]:   ISSUE#29: add the command 'help' in showInstructions; 
 [2016.04.19, CS]:   change to version 1.0;  
+[2016.04.20, CS]:   make the code python 2-3 compatible; 
 """
+# python 2-3 compatible code
+import future
+from builtins import input
+import past
+import six
+
+from io import open
+
 import parameter_RPG
 
 from random import randint
@@ -565,7 +574,7 @@ def fct_exit(turn, playerstatus, name):
         print("where do you want to save your char?")
         path = getdir(DialogTitle='Select folder:')
         os.chdir(path)
-        with open('player_saves.json', 'w') as fp:
+        with open('player_saves.json', 'w', encoding='utf-8') as fp:
             json.dump(playerstatus, fp)
         print("stats saved under: " + path)      
     raise SystemExit
@@ -583,7 +592,7 @@ def fct_save_game(auto, playerstatus, rooms, currentRoom, inventory, turn):
         output.append(inventory)
         output.append(currentRoom)
         output.append(turn)
-        with open('autosave_'+save_time+'.json', 'w') as fp:
+        with open('autosave_'+save_time+'.json', 'w', encoding='utf-8') as fp:
             json.dump(output, fp)
     # if called by the user (auto=0)
     else:      
@@ -595,21 +604,21 @@ def fct_save_game(auto, playerstatus, rooms, currentRoom, inventory, turn):
         output.append(inventory)
         output.append(currentRoom)
         output.append(turn)
-        with open('player_saves_'+save_time+'.json', 'w') as fp:
+        with open('player_saves_'+save_time+'.json', 'w', encoding='utf-8') as fp:
             json.dump(output, fp)
     print('game saved')
         
 def fct_load_game():
     path = getfile(FilterSpec='.json', DialogTitle='Select file:')
     os.chdir(path[1])
-    with open(path[0], 'r') as fp:
+    with open(path[0], 'r', encoding='utf-8') as fp:
         data = json.load(fp)
     print('game loaded')
     return(data[0],data[1],data[2],data[3],data[4])
     
 def write_history(name, command):
     # append the player's command to the history
-    with open(name, "a") as historyfile:
+    with open(name, "a", encoding='utf-8') as historyfile:
         historyfile.write(' '.join(command)+'\n')
     
 def random_dice(numberdices=6, numberoutput=2, exclusion = ' '):
