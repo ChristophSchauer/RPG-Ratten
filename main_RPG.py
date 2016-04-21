@@ -38,7 +38,9 @@ History:
                     input in them;
 [2016.04.18, CS]:   ISSUE#29: add the help function to the main loop;  
 [2016.04.19, CS]:   change the credits; change to version 1.0;   
-[2016.04.20, CS]:   ISSUE#35: make the code python 2-3 compatible;           
+[2016.04.20, CS]:   ISSUE#35: make the code python 2-3 compatible;
+                    ISSUE#32: implemented a behavoir of the game when the soap
+                    is used;
 """
 # python 2-3 compatible code
 import future

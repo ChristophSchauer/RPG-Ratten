@@ -357,7 +357,7 @@ def generate_char(name):
                     "keiner der Attribute dar mehr als 3 PUnkte haben")
         """
         data = input(">")
-        data = data.split(sep= ",")
+        data = data.split(',')
         # write the command to the history
         write_history(name, 'values: ' + str(data))
         for index in range(4):
@@ -549,6 +549,8 @@ def fct_use(parameter, currentRoom, rooms, inventory, torch):
                 if x is not "detail":
                     if parameter in rooms[currentRoom].get(x):
                         UsableItems.append(x)
+                        
+        # if the player uses a torch
         if parameter == "torch":
             if torch == 0:
                 torch = 3
@@ -557,7 +559,24 @@ def fct_use(parameter, currentRoom, rooms, inventory, torch):
                 torch += 3
                 print("You extended your torch's burning duration by 3")
             del inventory[inventory.index(parameter)]
-        elif UsableItems is not None:
+        
+        # if the player uses the soap
+        if parameter == 'soap':
+            if "person" in rooms[currentRoom]:
+                names = parameter_RPG.enemystatus.keys()
+                # if the princess is in the same room
+                if rooms[currentRoom]["person"][0] == "princess":
+                   print('the princess is not amused')
+                # if an enemy is in the same room  
+                elif names.count(rooms[currentRoom]['person'][0]) == 1:
+                    print('the enemy is not amused')
+                else:
+                    print('washing shadows?')
+            else:    
+                print('washing yourself for the princess does not change your social status')
+            del inventory[inventory.index(parameter)]
+
+        elif UsableItems != []:
             for x in UsableItems:
                 rooms[currentRoom].get(x).remove(parameter)
                 rooms[currentRoom].get(x).remove('hidden')
