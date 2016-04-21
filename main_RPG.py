@@ -1,10 +1,12 @@
+# -*- coding: utf-8 -*-
 """
 Header
 
 @author: Christoph
 Version:            1.0
 
-Programmed with:    3.4.4.1
+Programmed with:    WinPython 3.4.4.1
+Changed to:         WinPython 2.7.10.3
 
 History:
 [2016.03.23, CS]:   initial setup; copy the main code from: 
@@ -36,7 +38,7 @@ History:
                     input in them;
 [2016.04.18, CS]:   ISSUE#29: add the help function to the main loop;  
 [2016.04.19, CS]:   change the credits; change to version 1.0;   
-[2016.04.20, CS]:   make the code python 2-3 compatible;           
+[2016.04.20, CS]:   ISSUE#35: make the code python 2-3 compatible;           
 """
 # python 2-3 compatible code
 import future
@@ -51,7 +53,7 @@ from parameter_RPG import directions
 import time
 
 # version number
-version = 'V1_2016.04.20_08_CS'
+version = 'V1_2016.04.21_16_CS'
 
 def credits_game():
     functions_RPG.print_lines("development and programming","Christoph","Hias","")
@@ -80,7 +82,8 @@ def fct_main(currentRoom, inventory , turn, torch):
     print_lines("möchtest du eine Karte laden (J/N)?",
           "falls N, dann wird das Trainingsareal geladen.")
     '''
-    decision = input('>').lower()    
+    decision = input('>').lower() 
+    decision = decision.lower() 
     # write the command to the history
     functions_RPG.write_history(history, decision)
     
@@ -106,7 +109,8 @@ def fct_main(currentRoom, inventory , turn, torch):
         # .split() breaks it up into a list array
         # eg typing 'go east' would give the list:
         # ['go','east']
-        move = input(">").lower().split()        
+        move = input(">")
+        move = move.lower().split()  
         # write the command to the history
         functions_RPG.write_history(history, move)      
         

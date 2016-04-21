@@ -5,7 +5,8 @@ Header
 @author: Christoph
 Version :           1.0
 
-Programmed with:    3.4.4.1
+Programmed with:    WinPython 3.4.4.1
+Changed to:         WinPython 2.7.10.3
 
 History:
 [2016.03.25, CS]:   start with an enemy array; 

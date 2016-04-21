@@ -5,7 +5,8 @@ Header
 @author: Christoph
 Version :           1.0
 
-Programmed with:    3.4.4.1
+Programmed with:    WinPython 3.4.4.1
+Changed to:         WinPython 2.7.10.3
 
 History:
 [2016.03.24, CS]:   initial setup; put in all the functions of the main_RPG;
@@ -67,7 +68,9 @@ History:
                     the inventory;
 [2016.04.18, CS]:   ISSUE#29: add the command 'help' in showInstructions; 
 [2016.04.19, CS]:   change to version 1.0;  
-[2016.04.20, CS]:   make the code python 2-3 compatible; 
+[2016.04.20, CS]:   ISSUE#35: make the code python 2-3 compatible;
+[2016.04.21, CS]:   ISSUE#34: the game ask the user as long as he does not use 
+                    a number;
 """
 # python 2-3 compatible code
 import future
@@ -353,7 +356,8 @@ def generate_char(name):
                     "trenne sie mit Komma (z.B.: 2,2,3,1)",
                     "keiner der Attribute dar mehr als 3 PUnkte haben")
         """
-        data = input(">").split(sep= ",")
+        data = input(">")
+        data = data.split(sep= ",")
         # write the command to the history
         write_history(name, 'values: ' + str(data))
         for index in range(4):
@@ -438,7 +442,8 @@ def fct_move(parameter, currentRoom, rooms, inventory, name):
                 print("door locked")
                 if "key" in inventory:
                    print("want to use the key? [Y/N]")
-                   answer = input(">").lower()
+                   answer = input(">")
+                   answer = answer.lower()
                    # write the command to the history
                    write_history(name, 'want to use the key? ' + answer)
                    if answer == "y" or answer == "yes" or answer == "z":
@@ -567,7 +572,8 @@ def fct_exit(turn, playerstatus, name):
     print_lines("thank you for playing", 
                "you played " + str(turn) + " turn(s)", 
               "want to save your char (y/n)?")
-    answer = input(">").lower()
+    answer = input(">")
+    answer = answer.lower()
     # write the command to the history
     write_history(name, "want to save your char (y/n)? " + answer)
     if answer == 'y' or answer == 'yes' or answer == "z":
@@ -619,7 +625,7 @@ def fct_load_game():
 def write_history(name, command):
     # append the player's command to the history
     with open(name, "a", encoding='utf-8') as historyfile:
-        historyfile.write(' '.join(command)+'\n')
+        historyfile.write(u' '.join(command)+'\n')
     
 def random_dice(numberdices=6, numberoutput=2, exclusion = ' '):
     # if more than 0 dices are used
@@ -726,7 +732,18 @@ def fct_fight_rat(playerstatus, enemystatus, enemy, currentRoom, rooms, name):
                     else:
                         if fight_array[1,7] == 1:
                             print("(4) shake of overwhelming")
-                    decision = int(input(">"))
+                    # check if the user has an integer as input 
+                    check_integer = False
+                    while check_integer == False:
+                        decision = input(">")
+                        try:
+                            int(decision)
+                        except ValueError:
+                            check_integer = False
+                            print('I only take numbers, nothing else')
+                        else:
+                            check_integer = True
+                            decision = int(decision)
                     # write the command to the history
                     write_history(name, 'fight: ' + decision)
                     # Wert Spieler und Gegner bestimmen
