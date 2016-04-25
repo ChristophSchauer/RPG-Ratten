@@ -71,6 +71,7 @@ History:
 [2016.04.20, CS]:   ISSUE#35: make the code python 2-3 compatible;
 [2016.04.21, CS]:   ISSUE#34: the game ask the user as long as he does not use 
                     a number;
+[2016.04.25, CS]:   ISSUE#33: implemented the replay;                   
 """
 # python 2-3 compatible code
 import future
@@ -81,6 +82,7 @@ import six
 from io import open
 
 import parameter_RPG
+import main_RPG
 
 from random import randint
 from os import path
@@ -263,7 +265,7 @@ def showInstructions():
                 "'fight [person]'", 
                 "'credits'")
     
-def showStatus(currentRoom, rooms, turn, inventory, torch):
+def showStatus(currentRoom, rooms, turn, inventory, torch, history, playerstatus):
     """
     the user can see in which room he is standing
     also his inventory is shown to him   
@@ -308,6 +310,34 @@ def showStatus(currentRoom, rooms, turn, inventory, torch):
             if rooms[currentRoom]["person"][0] == "princess":
                 print_lines("you won the game!", 
                             "you played " + str(turn) + " turn(s)")
+                write_history(history, 'won the game: ' + str(turn) + ' turn(s)')
+                
+                # ask the player to save the character
+                print('want to save your character? (Y/N)')
+                decision = input('>').lower() 
+                decision = decision.lower() 
+                # write the command to the history
+                write_history(history, decision)                
+                if decision == 'y' or decision == 'yes' or decision == 'z':
+                    # save the character status
+                    fct_save_game(2, playerstatus, rooms, currentRoom, inventory, turn)
+                    
+                else:
+                    print('character not saved')
+                    
+                # ask the player to replay the game
+                print('want to replay? (Y/N)')
+                decision = input('>').lower() 
+                decision = decision.lower() 
+                # write the command to the history
+                write_history(history, 'replay: ' + decision)
+                if decision == 'y' or decision == 'yes' or decision == 'z':
+                    # start the game from the beginning
+                    main_RPG.fct_main()
+                else:
+                    print('goodbye')
+                    raise SystemExit
+                
     # print other accessible rooms
     CurRoom = []
     for x in rooms[currentRoom]:
@@ -604,33 +634,37 @@ def fct_exit(turn, playerstatus, name):
         print("stats saved under: " + path)      
     raise SystemExit
     
-def fct_save_game(auto, playerstatus, rooms, currentRoom, inventory, turn):
+def fct_save_game(status, playerstatus, rooms, currentRoom, inventory, turn):
     # get the localtime variables
     localtime = time.localtime(time.time())
     # make the save time stamp (year_month_day_hour_min_sec)
     save_time = str(localtime.tm_year) +'_'+ str(localtime.tm_mon) +'_'+ str(localtime.tm_mday) +'_'+ str(localtime.tm_hour) +'_'+ str(localtime.tm_min) +'_'+ str(localtime.tm_sec)
-    # if called from the auto save (auto=1)
-    if auto == 1:
-        output = []
-        output.append(rooms)
-        output.append(playerstatus)
-        output.append(inventory)
-        output.append(currentRoom)
-        output.append(turn)
+    save_time = unicode(save_time, 'utf-8')
+    # generate the output list
+    output = []
+    output.append(rooms)
+    output.append(playerstatus)
+    output.append(inventory)
+    output.append(currentRoom)
+    output.append(turn)
+    
+    # if called from the auto save (status=1)
+    if status == 1:
         with open('autosave_'+save_time+'.json', 'w', encoding='utf-8') as fp:
             json.dump(output, fp)
-    # if called by the user (auto=0)
+            
+    # if called from the character saving (status=2)
+    elif status == 2:
+        with open('charsave_'+save_time+'.json', 'w', encoding='utf-8') as fp:
+            json.dump(output, fp)
+            
+    # if called by the user (status=0)
     else:      
         path = getdir(DialogTitle='Select folder:')
         os.chdir(path)
-        output = []
-        output.append(rooms)
-        output.append(playerstatus)
-        output.append(inventory)
-        output.append(currentRoom)
-        output.append(turn)
         with open('player_saves_'+save_time+'.json', 'w', encoding='utf-8') as fp:
             json.dump(output, fp)
+                
     print('game saved')
         
 def fct_load_game():
@@ -639,6 +673,11 @@ def fct_load_game():
     with open(path[0], 'r', encoding='utf-8') as fp:
         data = json.load(fp)
     print('game loaded')
+    # data[0] = rooms
+    # data[1] = playerstatus
+    # data[2] = inventory
+    # data[3] = currentRoom
+    # data[4] = turn
     return(data[0],data[1],data[2],data[3],data[4])
     
 def write_history(name, command):

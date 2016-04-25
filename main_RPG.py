@@ -41,6 +41,8 @@ History:
 [2016.04.20, CS]:   ISSUE#35: make the code python 2-3 compatible;
                     ISSUE#32: implemented a behavoir of the game when the soap
                     is used;
+[2016.04.25, CS]:   load game and load character implemented; currentRoom, 
+                    inventory, torch and turn changed to be within fct_main;
 """
 # python 2-3 compatible code
 import future
@@ -63,7 +65,16 @@ def credits_game():
     functions_RPG.print_lines("support","missing","")
     functions_RPG.print_lines("special thanks","Kopfkino")
 
-def fct_main(currentRoom, inventory , turn, torch):
+def fct_main():
+    # start the player in room 1
+    currentRoom = 11
+    # an inventory, which is initially empty
+    inventory = []
+    #torch burn duration
+    torch = 0
+    # initialize the turns
+    turn = 1
+    
     # time window until the game makes an autosave
     time_window = 0
     
@@ -77,13 +88,8 @@ def fct_main(currentRoom, inventory , turn, torch):
     
     
     # ask the player, if he wants to load a game
-    functions_RPG.print_lines("want to load a room layout (Y/N)?",
-                              "if N, the default training area is loaded.")
-    '''
-    # if german
-    print_lines("möchtest du eine Karte laden (J/N)?",
-          "falls N, dann wird das Trainingsareal geladen.")
-    '''
+    functions_RPG.print_lines("want to load a save point (Y/N)?",
+                              "if N, a new game is started.")
     decision = input('>').lower() 
     decision = decision.lower() 
     # write the command to the history
@@ -93,10 +99,25 @@ def fct_main(currentRoom, inventory , turn, torch):
         # load the data of the save game
         playerstatus, rooms, currentRoom, inventory, turn = functions_RPG.fct_load_game()
     else:
-        # generate the character
-        playerstatus = functions_RPG.generate_char(history)
-        # generate rooms
-        rooms = functions_RPG.fct_rooms()
+        # ask the player if eh wants to load a character?
+        print('want to load a character? (Y/N)')
+        decision = input('>').lower() 
+        decision = decision.lower() 
+        # write the command to the history
+        functions_RPG.write_history(history, decision)
+        if decision == 'y' or decision == 'yes' or decision == 'z':
+            # load the data of the save game
+            playerstatus, rooms_dummy, currentRoom_dummy, inventory, turn_dummy = functions_RPG.fct_load_game()
+            # delete the not used parameters
+            del rooms_dummy
+            del currentRoom_dummy
+            del turn_dummy
+            
+        else:
+            # generate the character
+            playerstatus = functions_RPG.generate_char(history)
+            # generate rooms
+            rooms = functions_RPG.fct_rooms()
        
     functions_RPG.showInstructions()
         
@@ -105,7 +126,7 @@ def fct_main(currentRoom, inventory , turn, torch):
         # first time stamp
         first_time_stamp = time.time()
         
-        functions_RPG.showStatus(currentRoom, rooms, turn, inventory, torch)
+        functions_RPG.showStatus(currentRoom, rooms, turn, inventory, torch, history, playerstatus)
         
         # get the player's next move
         # .split() breaks it up into a list array
@@ -204,17 +225,9 @@ def fct_main(currentRoom, inventory , turn, torch):
            
 # main function
 if __name__=='__main__':
-    # start the player in room 1
-    currentRoom = 11
-    # an inventory, which is initially empty
-    inventory = []
-    #torch burn duration
-    torch = 0
-    # initialize the turns
-    turn = 1
     # version number
     global version
     print('Version: %s' % version)
 
     # start the game
-    fct_main(currentRoom, inventory, turn, torch)
+    fct_main()
