@@ -71,7 +71,9 @@ History:
 [2016.04.20, CS]:   ISSUE#35: make the code python 2-3 compatible;
 [2016.04.21, CS]:   ISSUE#34: the game ask the user as long as he does not use 
                     a number;
-[2016.04.25, CS]:   ISSUE#33: implemented the replay;                   
+[2016.04.25, CS]:   ISSUE#33: implemented the replay; 
+                    ISSUE#37: let the program check if python 2 or python 3 is
+                    used;
 """
 # python 2-3 compatible code
 import future
@@ -647,23 +649,40 @@ def fct_save_game(status, playerstatus, rooms, currentRoom, inventory, turn):
     output.append(inventory)
     output.append(currentRoom)
     output.append(turn)
-    
-    # if called from the auto save (status=1)
-    if status == 1:
-        with open('autosave_'+save_time+'.json', 'w', encoding='utf-8') as fp:
-            json.dump(output, fp)
-            
-    # if called from the character saving (status=2)
-    elif status == 2:
-        with open('charsave_'+save_time+'.json', 'w', encoding='utf-8') as fp:
-            json.dump(output, fp)
-            
-    # if called by the user (status=0)
-    else:      
-        path = getdir(DialogTitle='Select folder:')
-        os.chdir(path)
-        with open('player_saves_'+save_time+'.json', 'w', encoding='utf-8') as fp:
-            json.dump(output, fp)
+    if sys.version_info.major == 3: 
+        # if called from the auto save (status=1)
+        if status == 1:
+            with open('autosave_'+save_time+'.json', 'w', encoding='utf-8') as fp:
+                json.dump(output, fp)
+                
+        # if called from the character saving (status=2)
+        elif status == 2:
+            with open('charsave_'+save_time+'.json', 'w', encoding='utf-8') as fp:
+                json.dump(output, fp)
+                
+        # if called by the user (status=0)
+        else:      
+            path = getdir(DialogTitle='Select folder:')
+            os.chdir(path)
+            with open('player_saves_'+save_time+'.json', 'w', encoding='utf-8') as fp:
+                json.dump(output, fp)
+    else:
+                # if called from the auto save (status=1)
+        if status == 1:
+            with open('autosave_'+save_time+'.json', 'wb') as fp:
+                json.dump(output, fp)
+                
+        # if called from the character saving (status=2)
+        elif status == 2:
+            with open('charsave_'+save_time+'.json', 'wb') as fp:
+                json.dump(output, fp)
+                
+        # if called by the user (status=0)
+        else:      
+            path = getdir(DialogTitle='Select folder:')
+            os.chdir(path)
+            with open('player_saves_'+save_time+'.json', 'wb') as fp:
+                json.dump(output, fp)
                 
     print('game saved')
         
