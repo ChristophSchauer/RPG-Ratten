@@ -74,6 +74,8 @@ History:
 [2016.04.25, CS]:   ISSUE#33: implemented the replay; 
                     ISSUE#37: let the program check if python 2 or python 3 is
                     used;
+[2016.04.26, CS]:   ISSUE#30: added in showStatus a query for the
+                    case 'item' = [];
 """
 # python 2-3 compatible code
 import future
@@ -304,7 +306,7 @@ def showStatus(currentRoom, rooms, turn, inventory, torch, history, playerstatus
         if "detail" in rooms[currentRoom]:
             print(rooms[currentRoom]["detail"])
         # print an item if there is one
-        if "item" in rooms[currentRoom]:
+        if "item" in rooms[currentRoom] and rooms[currentRoom]['item'] != []:
              print("you see: " + str(rooms[currentRoom]["item"]))
         # print POI if there is one
         if "person" in rooms[currentRoom]:
