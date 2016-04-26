@@ -86,7 +86,6 @@ def fct_main():
     # generate file name
     history = 'history_'+save_time+'.txt'
     
-    
     # ask the player, if he wants to load a game
     functions_RPG.print_lines("want to load a save point (Y/N)?",
                               "if N, a new game is started.")
@@ -98,6 +97,9 @@ def fct_main():
     if decision == 'y' or decision == 'yes' or decision == 'z':
         # load the data of the save game
         playerstatus, rooms, currentRoom, inventory, turn = functions_RPG.fct_load_game()
+        # check if the user aborted the search
+        if playerstatus == 'ERROR':
+            print('using default settings')
     else:
         # ask the player if eh wants to load a character?
         print('want to load a character? (Y/N)')
@@ -108,6 +110,9 @@ def fct_main():
         if decision == 'y' or decision == 'yes' or decision == 'z':
             # load the data of the save game
             playerstatus, rooms_dummy, currentRoom_dummy, inventory, turn_dummy = functions_RPG.fct_load_game()
+            # check if the user aborted the search
+            if playerstatus == 'ERROR':
+                print('using default settings')
             # delete the not used parameters
             del rooms_dummy
             del currentRoom_dummy

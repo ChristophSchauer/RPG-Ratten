@@ -76,6 +76,9 @@ History:
                     used;
 [2016.04.26, CS]:   ISSUE#30: added in showStatus a query for the
                     case 'item' = [];
+                    ISSUE#39: implement '' as return value and check if it 
+                    happens, when it happens the game takes the default value
+                    or warns the player that this can't be done;
 """
 # python 2-3 compatible code
 import future
@@ -146,12 +149,12 @@ def getfile(FilterSpec='*', DialogTitle='Select File: ', DefaultName=''):
     root.destroy()
     
     if not os.path.exists(fullInFile):
-        return (0, 0)
+        (fileName, dirName) = ('','')
     else:
         print('Selection: ' + fullInFile)
         dirName = os.path.dirname(fullInFile)
         fileName = os.path.basename(fullInFile)
-        return (fileName, dirName)
+    return (fileName, dirName)
 
 def getdir(DialogTitle='Select Directory', DefaultName='.'):
     ''' 
@@ -186,10 +189,10 @@ def getdir(DialogTitle='Select Directory', DefaultName='.'):
     root.destroy()
     
     if not os.path.exists(fullDir):
-        return ''
+        fullDir =  ''
     else:
         print('Selection: ' + fullDir)
-        return fullDir
+    return fullDir
         
 def savefile(FilterSpec='*',DialogTitle='Save File: ', DefaultName=''):
     '''
@@ -632,6 +635,8 @@ def fct_exit(turn, playerstatus, name):
     if answer == 'y' or answer == 'yes' or answer == "z":
         print("where do you want to save your char?")
         path = getdir(DialogTitle='Select folder:')
+        if path == '':
+            print('aborted saving')
         os.chdir(path)
         with open('player_saves.json', 'w', encoding='utf-8') as fp:
             json.dump(playerstatus, fp)
@@ -665,6 +670,8 @@ def fct_save_game(status, playerstatus, rooms, currentRoom, inventory, turn):
         # if called by the user (status=0)
         else:      
             path = getdir(DialogTitle='Select folder:')
+            if path == '':
+                print('aborted saving')
             os.chdir(path)
             with open('player_saves_'+save_time+'.json', 'w', encoding='utf-8') as fp:
                 json.dump(output, fp)
@@ -682,6 +689,8 @@ def fct_save_game(status, playerstatus, rooms, currentRoom, inventory, turn):
         # if called by the user (status=0)
         else:      
             path = getdir(DialogTitle='Select folder:')
+            if path == '':
+                print('aborted saving')
             os.chdir(path)
             with open('player_saves_'+save_time+'.json', 'wb') as fp:
                 json.dump(output, fp)
@@ -690,15 +699,21 @@ def fct_save_game(status, playerstatus, rooms, currentRoom, inventory, turn):
         
 def fct_load_game():
     path = getfile(FilterSpec='.json', DialogTitle='Select file:')
-    os.chdir(path[1])
-    with open(path[0], 'r', encoding='utf-8') as fp:
-        data = json.load(fp)
-    print('game loaded')
     # data[0] = rooms
     # data[1] = playerstatus
     # data[2] = inventory
     # data[3] = currentRoom
     # data[4] = turn
+    # check if the user aborted the search
+    if path == ('',''):
+        print('can not load map')
+        data = ['ERROR',0,0,0,0]
+    else:
+        print('load map')
+        os.chdir(path[1])
+        with open(path[0], 'r', encoding='utf-8') as fp:
+            data = json.load(fp)
+
     return(data[0],data[1],data[2],data[3],data[4])
     
 def write_history(name, command):
