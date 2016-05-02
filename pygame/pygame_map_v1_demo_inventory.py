@@ -18,10 +18,13 @@ and the last room
 
 02052016
 implement the update of the old and the new currentRoom; also shows stairs in 
-the current room
+the current room: added the inventory to the game;
 '''
 import pygame, sys
 from pygame.locals import *
+import os
+
+os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
 # currentRoom
 currentRoom = 11
@@ -195,6 +198,9 @@ personPos = [playerpos[11][0]-1,playerpos[11][1]-1]
 pygame.init()
 DISPLAYSURF = pygame.display.set_mode((MAPWIDTH*TILEWIDTH+500,MAPHEIGHT*TILEHEIGHT+100)) 
 
+# add the font for the inventory
+INVFONT = pygame.font.SysFont('ActionIsShaded', 12)
+
 # loop through each row
 for row in range(MAPHEIGHT):
     # loop through each column
@@ -315,7 +321,18 @@ while True:
             DISPLAYSURF.blit(PRINCESS,(personPos[0]*TILEWIDTH,personPos[1]*TILEHEIGHT))
         if rooms[currentRoom]['person'][1] == 1:
             personPos = [playerpos[currentRoom][0]-1,playerpos[currentRoom][1]-1]
-            DISPLAYSURF.blit(BAT,(personPos[0]*TILEWIDTH,personPos[1]*TILEHEIGHT))   
+            DISPLAYSURF.blit(BAT,(personPos[0]*TILEWIDTH,personPos[1]*TILEHEIGHT))  
+            
+    # display the inventory
+    placePosition = 10
+    for item in playerstatus:
+        # add the text
+        textObj = INVFONT.render(str(item), True, WHITE, BLACK)
+        DISPLAYSURF.blit(textObj,(MAPWIDTH*TILEWIDTH+20,placePosition))
+        # add the text showing the amount in the inventory
+        textObj = INVFONT.render(str(playerstatus[item]), True, WHITE, BLACK)
+        DISPLAYSURF.blit(textObj,(MAPWIDTH*TILEWIDTH+50,placePosition))
+        placePosition += 10
     
     # update the display
     pygame.display.update()

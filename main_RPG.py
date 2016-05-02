@@ -43,6 +43,8 @@ History:
                     is used;
 [2016.04.25, CS]:   load game and load character implemented; currentRoom, 
                     inventory, torch and turn changed to be within fct_main;
+[2016.05.02, CS]:   insert the parameters of the pygame; pygame not 
+                    implemented;
 """
 # python 2-3 compatible code
 import future
@@ -74,6 +76,28 @@ def fct_main():
     torch = 0
     # initialize the turns
     turn = 1
+    
+    # game dimensions
+    TILEWIDTH = 12
+    TILEHEIGHT = 11
+    MAPWIDTH = 9
+    MAPHEIGHT= 9
+    
+    # the player image
+    PLAYER = pygame.image.load('player_new.png')
+    BAT = pygame.image.load('bat_new.png')
+    PRINCESS = pygame.image.load('princess_new.png')
+    
+    # playerposition depending on room
+    playerpos = {11:[2,2],
+                 12:[6,2],
+                 13:[2,6],
+                 14:[6,6],
+                 21:[2,2],
+                 22:[6,2],
+                 23:[2,6],
+                 24:[6,6],
+                 32:[6,2]}
     
     # time window until the game makes an autosave
     time_window = 0

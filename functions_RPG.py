@@ -79,6 +79,7 @@ History:
                     ISSUE#39: implement '' as return value and check if it 
                     happens, when it happens the game takes the default value
                     or warns the player that this can't be done;
+[2016.05.02, CS]:   insert the parts of pygame in the functions: fct_rooms;
 """
 # python 2-3 compatible code
 import future
@@ -414,7 +415,6 @@ def generate_char(name):
 
 def fct_rooms():
     print("using default")
-
     # a dictionary linking a room to other positions
     rooms = {
         00:{ "mission_eng" : "find the princess",
@@ -424,49 +424,58 @@ def fct_rooms():
              "east" : [12,'opened'],
              "south": [13,'opened'],
              "up"   : [21,'opened'],
-             "item" : ["torch"]},
+             "item" : ["torch"],
+             "room" : [1,1]},
             
         12:{ "name" : "bedroom",
              "west" : [11,'opened'],
-             "south": [14,'opened'],},
+             "south": [14,'opened'],
+             "room" : [5,1]},
             
         13:{ "name" : "kitchen",
              "north": [11,'opened'],
              "item" : ["sword"],
-             "trigger": ["dark"]},
+             "trigger": ["dark"],
+             "room" : [1,5]},
             
         14:{ "name" : "bathroom",
              "detail":"You see traces of a fight, the sink is broken.",
              "north": [12,'opened'],
-             "item" : ["soap"]},
+             "item" : ["soap"],
+             "room" : [5,5]},
             
         21:{ "name" : "staircase",
              "detail":"You see a dusty old bookshelf.", 
              "east" : [22,'opened'],
              "south": [23,'opened','hidden','book'],
              "down" : [11,'opened'],
-             "item" : ["torch"]},
+             "item" : ["torch"],
+             "room" : [1,1]},
             
         22:{ "name" : "corridor",
              "west" : [21,'opened'],
              "south": [24,'opened'],
              "up"   : [32,'locked'],
              "item" : ["torch"],
-             "person": ["bat",1]},
+             "person": ["bat",1],
+             "room" : [5,1]},
             
         23:{ "name" : "terrace",
              "north": [21,'opened'],
              "trigger": ["dark"],
              "person": ["bat",1],
-             "item" : ["key"]},
+             "item" : ["key"],
+             "room" : [1,5]},
             
         24:{ "name" : "study",
              "north": [22,'opened'],
-             "item" : ["book"]},
+             "item" : ["book"],
+             "room" : [5,5]},
         
         32:{ "name" : "towerroom",
              "down" : [22,'locked'],
-             "person" : ["princess",0]}
+             "person" : ["princess",0],
+             "room" : [5,1]}
             }
     return(rooms)
     

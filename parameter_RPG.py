@@ -20,6 +20,7 @@ History:
 [2016.04.13, CS]:   ISSUE#17: start with the dictionary for 'generate_char', 'showStatus',
                     fct_rooms, fct_move, fct_get, fct_drop, fct_fight;
 [2016.04.19, CS]:   change to version 1.0;  
+[2016.05.02, CS]:   implement the parameters for pygame;
 """
 # sorted to be used for the ring
 directions = ['north','east','up','south','west','down']
@@ -158,44 +159,55 @@ packs_eng = ['brand rats','garbage eater','collectors','red eyes','sharp teeth',
 tricks = ['Außergewöhnlicher Verbündeter', 'Eisenkiefer', 'Eisenmagen', 'Dickes Fell', 'Fiese Ratte', 'Flinke Ratte', 'Geruchlos', 'Gespür für Artefakte', 'Guter Beobachter', 'Kampfratte', 'Loses Maulwerk', 'Pakt mit dem Rattentod', 'Rattensinn', 'Rattig', 'Schlangenratte', 'Tote Ratte', 'Treuer Diener der Erbauer', 'Untrüglicher Instinkt', 'Vererbte Resistenz', 'Wir sind doch Kollegen']
 # Stufe 1 oder 2 (Bonus +1/+2)
 talents = ['Aus dem Weg gehen', 'Fallenkunde', 'Gänge und Abteilungen', 'hear,see,sniff', 'scratch,bite', 'climb,spring', 'legends,rumors', 'Quasseln und beeindrucken', 'swim,dive', 'vanish,hide', 'Von den Erbauern', 'Von der Natur', 'Wunden lecken']
-
 talents_eng = ['Aus dem Weg gehen', 'Fallenkunde', 'Gänge und Abteilungen', 'hear,see,sniff', 'scratch,bite', 'climb,spring', 'legends,rumors', 'Quasseln und beeindrucken', 'swim,dive', 'vanish,hide', 'Von den Erbauern', 'Von der Natur', 'Wunden lecken']
 
-# german / english dictionary
-language = {"selection"                         : "Auswahl",
-            # generate_char
-            "name your hero please:"            : "Bitte benenne deinen Helden:",
-            "you distributed the values false"  : "du hast die Werte falsch verteilt",
-            "your char was created, now the game can begin" : "Character erstellt, beginne das Abenteuer",
-            # showStatus
-            "you are in the "                   : "du bist in der/dem ",
-            "inventory: "                       : "Inventar: ",
-            "you see: "                         : "du siehst: ",
-            "you won the game!"                 : "du hast das Spiel gewonnen!",
-            "you played "                       : "Spielzeit ",
-            " turn(s)"                          : " Zug/Züge",
-            "There's a door leading: "          : "Eine Tür führt nach: ",
-            "There are no doors you can see!"   : "Du siehst keine Türen!",
-            "There are doors leading: "         : "Es führen Türen nach: ",
-            # fct_rooms
-            "using default":"",
-            # fct_move
-            "door locked":"",
-            "want to use the key? [Y/N]":"",
-            "opens the door with the key":"",
-            "you can't go that way!":"",
-            # fct_get
-            " got!":"",
-            "can't get ":"",
-            # fct_fight
-            "enemy died":"",
-            "you died":"",
-            "the game closes in 10 seconds":"",
-            "this person can't be attacked":"",
-            "you are fighting against your own shadow":"",
-            #ftc_drop
-            "you can't drop anything":"",
-            "you dropped ":""
-            # fct_exit
-            
-            }
+# PYGAME
+# color of the tiles
+BLACK  = (0,  0,  0  )
+WHITE  = (255,255,255)
+BROWN  = (153,76, 0  )
+GREEN  = (0,  255,0  )
+RED    = (255,0,  0  )
+BLUE   = (0,  0,  255) 
+GREY   = (128,128,128)
+YELLOW = (255,255,0  )
+MAGENTA= (255,0  ,255)
+CYAN   = (0,  255,255)
+
+# dictionary linking resources to colours
+colours = {0 : GREY,
+           1 : BLACK,
+           2 : BROWN,
+           3 : WHITE,
+           4 : YELLOW}
+           
+# tile maps for the different levels
+tilemap_1 = [[1,1,1,1,1,1,1,1,1],
+             [1,0,0,0,1,0,0,0,1],           
+             [1,0,0,0,0,0,0,0,1],
+             [1,0,0,0,1,0,0,0,1],           
+             [1,1,0,1,1,1,0,1,1],           
+             [1,0,0,0,1,0,0,0,1],           
+             [1,0,0,0,1,0,0,0,1],           
+             [1,0,0,0,1,0,0,0,1],           
+             [1,1,1,1,1,1,1,1,1]]
+               
+tilemap_2 = [[1,1,1,1,1,1,1,1,1],
+             [1,0,0,0,1,0,0,0,1],           
+             [1,0,0,0,0,0,0,0,1],
+             [1,0,0,0,1,0,0,0,1],           
+             [1,1,0,1,1,1,0,1,1],           
+             [1,0,0,0,1,0,0,0,1],           
+             [1,0,0,0,1,0,0,0,1],           
+             [1,0,0,0,1,0,0,0,1],           
+             [1,1,1,1,1,1,1,1,1]]
+               
+tilemap_3 = [[0,0,0,0,1,1,1,1,1],
+             [0,0,0,0,1,0,0,0,1],
+             [0,0,0,0,1,0,0,0,1],
+             [0,0,0,0,1,0,0,0,1],
+             [0,0,0,0,1,1,1,1,1],
+             [0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0]]
