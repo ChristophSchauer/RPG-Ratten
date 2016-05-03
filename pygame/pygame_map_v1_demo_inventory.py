@@ -19,6 +19,10 @@ and the last room
 02052016
 implement the update of the old and the new currentRoom; also shows stairs in 
 the current room: added the inventory to the game;
+
+03052016
+try to implement the ask for the trigger and if he is dark
+ERROR1: the persons in the the not dark rooms are not shown
 '''
 import pygame, sys
 from pygame.locals import *
@@ -48,11 +52,13 @@ CYAN   = (0,  255,255)
 
 
 # dictionary linking resources to colours
-colours = {0 : GREY,
-           1 : BLACK,
-           2 : BROWN,
+colours = {0 : GREY,  # dark room
+           1 : BLACK, # walls
+           2 : BROWN, # room alight
            3 : WHITE,
-           4 : YELLOW}
+           4 : YELLOW,
+           5 : GREEN, # stair up
+           6 : RED}   # stair down
            
 # a dictionary linking resources to textures
 textures = {}
@@ -305,23 +311,46 @@ while True:
                         pygame.draw.rect(DISPLAYSURF, colours[tilemap_3[row][column]],(column*TILEWIDTH,row*TILEHEIGHT,TILEWIDTH,TILEHEIGHT))
         # change layout in current room
         # find start point
-        x_start = rooms[currentRoom]['room'][0]
-        y_start = rooms[currentRoom]['room'][1]
-        pygame.draw.rect(DISPLAYSURF, colours[2],(x_start*TILEWIDTH,y_start*TILEHEIGHT,3*TILEWIDTH,3*TILEHEIGHT)) 
-        if 'up' in rooms[currentRoom] or 'down' in rooms[currentRoom]:
-            pygame.draw.rect(DISPLAYSURF, colours[3],((x_start+2)*TILEWIDTH,y_start*TILEHEIGHT,TILEWIDTH,TILEHEIGHT))
-                
+        if 'trigger' not in rooms[currentRoom]:
+            # display an enemy if available
+            if 'person' in rooms[currentRoom]:
+                if rooms[currentRoom]['person'][1] == 0:
+                    personPos = [playerpos[currentRoom][0]+1,playerpos[currentRoom][1]+1]
+                    DISPLAYSURF.blit(PRINCESS,(personPos[0]*TILEWIDTH,personPos[1]*TILEHEIGHT))
+                if rooms[currentRoom]['person'][1] == 1:
+                    personPos = [playerpos[currentRoom][0]-1,playerpos[currentRoom][1]-1]
+                    DISPLAYSURF.blit(BAT,(personPos[0]*TILEWIDTH,personPos[1]*TILEHEIGHT)) 
+            x_start = rooms[currentRoom]['room'][0]
+            y_start = rooms[currentRoom]['room'][1]
+            pygame.draw.rect(DISPLAYSURF, colours[2],(x_start*TILEWIDTH,y_start*TILEHEIGHT,3*TILEWIDTH,3*TILEHEIGHT)) 
+            if 'up' in rooms[currentRoom]:
+                pygame.draw.rect(DISPLAYSURF, colours[5],((x_start+2)*TILEWIDTH,y_start*TILEHEIGHT,TILEWIDTH,TILEHEIGHT))
+            elif 'down' in rooms[currentRoom]:
+                pygame.draw.rect(DISPLAYSURF, colours[6],((x_start+2)*TILEWIDTH,y_start*TILEHEIGHT,TILEWIDTH,TILEHEIGHT))
+        else:
+            if 'dark' in rooms[currentRoom]['trigger']:
+                continue
+            else:
+                # display an enemy if available
+                if 'person' in rooms[currentRoom]:
+                    if rooms[currentRoom]['person'][1] == 0:
+                        personPos = [playerpos[currentRoom][0]+1,playerpos[currentRoom][1]+1]
+                        DISPLAYSURF.blit(PRINCESS,(personPos[0]*TILEWIDTH,personPos[1]*TILEHEIGHT))
+                    if rooms[currentRoom]['person'][1] == 1:
+                        personPos = [playerpos[currentRoom][0]-1,playerpos[currentRoom][1]-1]
+                        DISPLAYSURF.blit(BAT,(personPos[0]*TILEWIDTH,personPos[1]*TILEHEIGHT)) 
+                x_start = rooms[currentRoom]['room'][0]
+                y_start = rooms[currentRoom]['room'][1]
+                pygame.draw.rect(DISPLAYSURF, colours[2],(x_start*TILEWIDTH,y_start*TILEHEIGHT,3*TILEWIDTH,3*TILEHEIGHT)) 
+                if 'up' in rooms[currentRoom]:
+                    pygame.draw.rect(DISPLAYSURF, colours[5],((x_start+2)*TILEWIDTH,y_start*TILEHEIGHT,TILEWIDTH,TILEHEIGHT))
+                elif 'down' in rooms[currentRoom]:
+                    pygame.draw.rect(DISPLAYSURF, colours[6],((x_start+2)*TILEWIDTH,y_start*TILEHEIGHT,TILEWIDTH,TILEHEIGHT))
+
     # display the player at the correct position
     DISPLAYSURF.blit(PLAYER,(playerPos[0]*TILEWIDTH,playerPos[1]*TILEHEIGHT))
     
-    # display an enemy  if available
-    if 'person' in rooms[currentRoom]:
-        if rooms[currentRoom]['person'][1] == 0:
-            personPos = [playerpos[currentRoom][0]+1,playerpos[currentRoom][1]+1]
-            DISPLAYSURF.blit(PRINCESS,(personPos[0]*TILEWIDTH,personPos[1]*TILEHEIGHT))
-        if rooms[currentRoom]['person'][1] == 1:
-            personPos = [playerpos[currentRoom][0]-1,playerpos[currentRoom][1]-1]
-            DISPLAYSURF.blit(BAT,(personPos[0]*TILEWIDTH,personPos[1]*TILEHEIGHT))  
+ 
             
     # display the inventory
     placePosition = 10
