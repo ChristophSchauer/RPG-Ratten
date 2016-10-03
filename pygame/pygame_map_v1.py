@@ -8,6 +8,9 @@ Created on Thu Apr 28 19:17:26 2016
 '''
 usingpython: PYgame Tilemaps
 following are the different levels and the colors
+
+History:
+[03.10.2016, CS]: add .convert(), because the blit() is faster;
 '''
 import pygame, sys
 from pygame.locals import *
@@ -64,9 +67,9 @@ DX = 500
 DY = 100
 
 # the player image
-PLAYER = pygame.image.load('player.png')
-BAT = pygame.image.load('bat.png')
-PRINCESS = pygame.image.load('princess.png')
+PLAYER = pygame.image.load('player.png').convert()
+BAT = pygame.image.load('bat.png').convert()
+PRINCESS = pygame.image.load('princess.png').convert()
 
 # playerposition depending on room
 playerpos = {11:[2,2],
