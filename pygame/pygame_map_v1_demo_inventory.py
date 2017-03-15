@@ -350,6 +350,14 @@ while True:
     # display the player at the correct position
     DISPLAYSURF.blit(PLAYER,(playerPos[0]*TILEWIDTH,playerPos[1]*TILEHEIGHT))
     
+    # display an enemy  if available
+    if 'person' in rooms[currentRoom]:
+        if rooms[currentRoom]['person'][1] == 0:
+            personPos = [playerpos[currentRoom][0]+1,playerpos[currentRoom][1]+1]
+            DISPLAYSURF.blit(PRINCESS,(personPos[0]*TILEWIDTH,personPos[1]*TILEHEIGHT))
+        if rooms[currentRoom]['person'][1] == 1:
+            personPos = [playerpos[currentRoom][0]-1,playerpos[currentRoom][1]-1]
+            DISPLAYSURF.blit(BAT,(personPos[0]*TILEWIDTH,personPos[1]*TILEHEIGHT)) 
  
             
     # display the inventory
